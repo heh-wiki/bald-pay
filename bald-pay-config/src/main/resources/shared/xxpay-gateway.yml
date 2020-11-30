@@ -1,0 +1,32 @@
+server:
+  port: 3021
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+
+zuul:
+  ignoredServices: '*'
+  host:
+    connect-timeout-millis: 60000
+    socket-timeout-millis: 60000
+
+  routes:
+    mpay-service:
+        path: /api/**
+        serviceId: mpay-web
+
+    mpay-web:
+        path: /notify/**
+        serviceId: mpay-service
+
+logging:
+  file: ./log/mpay-gateway.log
