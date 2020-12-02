@@ -1,1 +1,23 @@
+server:
+  port: 9080
 
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: wiki.heh.bald.pay.service.model
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+ali:
+  notify_url: http://jiutongtang.cn:19080/notify/pay/aliPayNotifyRes.htm
+  return_url: http://jiutongtang.cn:19080
+wx:
+  notify_url: http://jiutongtang.cn:19080/notify/pay/wxPayNotifyRes.htm
+cert:
+  root:
+    path: /home/mpay/service/cert

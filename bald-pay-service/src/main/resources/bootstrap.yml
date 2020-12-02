@@ -1,15 +1,15 @@
 spring:
   application:
     name: @artifactId@
-  cloud:
-    config:
-      discovery:
-        enabled: true            # 默认false，设为true表示使用注册中心中的configserver配置而不自己配置configserver的uri
-        serviceId: mpay-config  # 指定config server在服务发现中的serviceId，默认为：configserver
-      profile: dev
-      fail-fast: true
-      password: mpay
-      username: user
+#  cloud:
+#    config:
+#      discovery:
+#        enabled: true            # 默认false，设为true表示使用注册中心中的configserver配置而不自己配置configserver的uri
+#        serviceId: bald-pay-config  # 指定config server在服务发现中的serviceId，默认为：configserver
+#      profile: dev
+#      fail-fast: true
+#      password: baldpay
+#      username: user
 
 eureka:
   client:
