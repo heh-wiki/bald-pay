@@ -27,6 +27,8 @@ import wiki.heh.bald.pay.common.util.MyBase64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wiki.heh.bald.pay.common.util.BaldPayUtil;
+import wiki.heh.bald.pay.service.exception.PayServiceErrorType;
+import wiki.heh.bald.pay.service.exception.ServiceException;
 import wiki.heh.bald.pay.service.model.MchInfo;
 import wiki.heh.bald.pay.service.model.PayChannel;
 import wiki.heh.bald.pay.service.model.PayOrder;
@@ -37,6 +39,7 @@ import wiki.heh.bald.pay.service.service.PayChannelService;
 import wiki.heh.bald.pay.service.service.PayOrderService;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 支付渠道接口:支付宝
@@ -252,21 +255,20 @@ public class PayChannel4AlipayController {
     @PostMapping("/pay/channel/ali_qr")
     public String doAliPayQrReq(@RequestBody AliQrPayForm form) {
         String logPrefix = "【支付宝当面付之扫码支付下单】";
-       PayOrder payOrder = payOrderService.selectPayOrder(form.getPayOrderId());
-        String payOrderId = payOrder.getPayOrderId();
-        String mchId = payOrder.getMchId();
-        String channelId = payOrder.getChannelId();
-        MchInfo mchInfo = mchInfoService.selectMchInfo(mchId);
-        String resKey = mchInfo == null ? "" : mchInfo.getResKey();
-        if ("".equals(resKey))
+        PayOrder payOrder = Optional.ofNullable(payOrderService.selectPayOrder(form.getPayOrderId())).orElseThrow(
+                () -> new ServiceException(PayServiceErrorType.PAY_ORDER_DOES_NOT_EXIST)
+        );
+        MchInfo mchInfo = Optional.ofNullable(mchInfoService.selectMchInfo(payOrder.getMchId())).orElseThrow(() -> new ServiceException(PayServiceErrorType.MERCHANT_DOES_NOT_EXIST));
+//        String resKey = mchInfo == null ? "" : mchInfo.getResKey();
+        if ("".equals(mchInfo.getResKey()))
             return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
-        PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+        PayChannel payChannel = payChannelService.selectPayChannel(payOrder.getChannelId(), payOrder.getMchId());
         alipayConfig.init(payChannel.getParam());
         AlipayClient client = new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getApp_id(), alipayConfig.getRsa_private_key(), AlipayConfig.FORMAT, AlipayConfig.CHARSET, alipayConfig.getAlipay_public_key(), AlipayConfig.SIGNTYPE);
         AlipayTradePrecreateRequest alipay_request = new AlipayTradePrecreateRequest();
         // 封装请求支付信息
         AlipayTradePrecreateModel model = new AlipayTradePrecreateModel();
-        model.setOutTradeNo(payOrderId);
+        model.setOutTradeNo(payOrder.getPayOrderId());
         model.setSubject(payOrder.getSubject());
         model.setTotalAmount(AmountUtil.convertCent2Dollar(payOrder.getAmount().toString()));
         model.setBody(payOrder.getBody());
@@ -299,13 +301,13 @@ public class PayChannel4AlipayController {
             e.printStackTrace();
         }
         _log.info("{}生成跳转路径：payUrl={}", logPrefix, payUrl);
-        payOrderService.updateStatus4Ing(payOrderId, null);
+        payOrderService.updateStatus4Ing(payOrder.getPayOrderId(), null);
         _log.info("{}生成请求支付宝数据,req={}", logPrefix, alipay_request.getBizModel());
         _log.info("###### 商户统一下单处理完成 ######");
         Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
-        map.put("payOrderId", payOrderId);
+        map.put("payOrderId", payOrder.getPayOrderId());
         map.put("payUrl", payUrl);
-        return BaldPayUtil.makeRetData(map, resKey);
+        return BaldPayUtil.makeRetData(map, mchInfo.getResKey());
     }
 
 }
