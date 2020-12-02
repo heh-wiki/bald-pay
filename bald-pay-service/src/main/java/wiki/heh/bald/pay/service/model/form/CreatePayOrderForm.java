@@ -15,9 +15,9 @@ public class CreatePayOrderForm {
     private String mchId;
     @ApiModelProperty(value = "商户订单号", example = "2020120221060400046")
     private String mchOrderNo;
-    @ApiModelProperty(value = "渠道ID", example = "ALI_QR")
+    @ApiModelProperty(value = "渠道ID",required = true, example = "ALIPAY_QR")
     private String channelId;
-    @ApiModelProperty(value = "支付金额,单位分", example = "99999")
+    @ApiModelProperty(value = "支付金额,单位分",required = true, example = "99999")
     private Long amount;
     @ApiModelProperty(value = "三位货币代码,人民币:cny", example = "cny")
     private String currency;
@@ -25,28 +25,18 @@ public class CreatePayOrderForm {
     private String clientIp;
     @ApiModelProperty(value = "设备", example = "ios10.3.6")
     private String device;
-    @ApiModelProperty(value = "商品标题", example = "伴置车测试商品")
+    @ApiModelProperty(value = "商品标题",required = true, example = "伴置车测试商品")
     private String subject;
-    @ApiModelProperty(value = "商品描述信息", example = "伴置车测试商品的描述信息")
+    @ApiModelProperty(value = "商品描述信息",required = true, example = "伴置车测试商品的描述信息")
     private String body;
     @ApiModelProperty(value = "特定渠道发起时额外参数", example = "{\"openId\":\"123\"}")
     private String extra;
-    @ApiModelProperty(value = "渠道商户ID", example = "2088102181727902")
-    private String channelMchId;
     @ApiModelProperty(value = "扩展参数1", example = "")
     private String param1;
     @ApiModelProperty(value = "扩展参数2", example = "")
     private String param2;
-    @ApiModelProperty(value = "通知地址", example = "http://jiutongtang.cn:19060/test")
+    @ApiModelProperty(value = "通知地址",required = true, example = "http://jiutongtang.cn:19060/test")
     private String notifyUrl;
-
-    public String getChannelMchId() {
-        return channelMchId;
-    }
-
-    public void setChannelMchId(String channelMchId) {
-        this.channelMchId = channelMchId;
-    }
 
     public String getMchId() {
         return mchId;

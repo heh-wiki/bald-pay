@@ -27,6 +27,7 @@ import wiki.heh.bald.pay.common.util.MyBase64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wiki.heh.bald.pay.common.util.BaldPayUtil;
+import wiki.heh.bald.pay.common.util.PayDigestUtil;
 import wiki.heh.bald.pay.service.exception.PayServiceErrorType;
 import wiki.heh.bald.pay.service.exception.ServiceException;
 import wiki.heh.bald.pay.service.model.MchInfo;
@@ -34,6 +35,7 @@ import wiki.heh.bald.pay.service.model.PayChannel;
 import wiki.heh.bald.pay.service.model.PayOrder;
 import wiki.heh.bald.pay.service.channel.alipay.AlipayConfig;
 import wiki.heh.bald.pay.service.model.form.AliQrPayForm;
+import wiki.heh.bald.pay.service.model.vo.Result;
 import wiki.heh.bald.pay.service.service.MchInfoService;
 import wiki.heh.bald.pay.service.service.PayChannelService;
 import wiki.heh.bald.pay.service.service.PayOrderService;
@@ -253,15 +255,14 @@ public class PayChannel4AlipayController {
      */
     @ApiOperation("支付宝当面付之扫码支付")
     @PostMapping("/pay/channel/ali_qr")
-    public String doAliPayQrReq(@RequestBody AliQrPayForm form) {
+    public Result doAliPayQrReq(@RequestBody AliQrPayForm form) {
         String logPrefix = "【支付宝当面付之扫码支付下单】";
         PayOrder payOrder = Optional.ofNullable(payOrderService.selectPayOrder(form.getPayOrderId())).orElseThrow(
                 () -> new ServiceException(PayServiceErrorType.PAY_ORDER_DOES_NOT_EXIST)
         );
         MchInfo mchInfo = Optional.ofNullable(mchInfoService.selectMchInfo(payOrder.getMchId())).orElseThrow(() -> new ServiceException(PayServiceErrorType.MERCHANT_DOES_NOT_EXIST));
-//        String resKey = mchInfo == null ? "" : mchInfo.getResKey();
         if ("".equals(mchInfo.getResKey()))
-            return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
+            return Result.fail(PayServiceErrorType.PAY_ORDER_DOES_NOT_EXIST);
         PayChannel payChannel = payChannelService.selectPayChannel(payOrder.getChannelId(), payOrder.getMchId());
         alipayConfig.init(payChannel.getParam());
         AlipayClient client = new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getApp_id(), alipayConfig.getRsa_private_key(), AlipayConfig.FORMAT, AlipayConfig.CHARSET, alipayConfig.getAlipay_public_key(), AlipayConfig.SIGNTYPE);
@@ -307,7 +308,7 @@ public class PayChannel4AlipayController {
         Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
         map.put("payOrderId", payOrder.getPayOrderId());
         map.put("payUrl", payUrl);
-        return BaldPayUtil.makeRetData(map, mchInfo.getResKey());
+        return Result.sign(PayDigestUtil.getSign(map,  mchInfo.getResKey(), "payParams"),map);
     }
 
 }

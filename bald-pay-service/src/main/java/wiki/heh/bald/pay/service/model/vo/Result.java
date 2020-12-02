@@ -26,6 +26,8 @@ public class Result<T> {
     private String code;
     @ApiModelProperty(value = "处理结果描述信息")
     private String msg;
+    @ApiModelProperty(value = "签名")
+    private String sign;
     @ApiModelProperty(value = "请求结果生成时间戳")
     private Instant time;
     @ApiModelProperty(value = "处理结果数据信息")
@@ -68,6 +70,14 @@ public class Result<T> {
         this.time = ZonedDateTime.now().toInstant();
     }
 
+    private Result(String sign, String code, String msg, T data) {
+        this.sign = sign;
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+        this.time = ZonedDateTime.now().toInstant();
+    }
+
     /**
      * 快速创建成功结果并返回结果数据
      *
@@ -86,6 +96,12 @@ public class Result<T> {
     public static Result success() {
         return success(null);
     }
+
+    public static Result sign(String sign,Object data) {
+
+        return new Result<>(sign,SUCCESSFUL_CODE, SUCCESSFUL_msg, data);
+    }
+
 
     /**
      * 系统异常类没有返回数据
@@ -146,5 +162,9 @@ public class Result<T> {
 
     public T getData() {
         return data;
+    }
+
+    public String getSign() {
+        return sign;
     }
 }

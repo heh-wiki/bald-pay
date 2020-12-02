@@ -36,7 +36,6 @@ public class PayChannelServiceController {
         _log.info("channelId << {},mchId<<{}", channelId, mchId);
         JSONObject retObj = new JSONObject();
         retObj.put("code", "0000");
-
         PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
         if (payChannel == null) {
             retObj.put("code", "0002");

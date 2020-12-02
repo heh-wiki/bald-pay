@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import wiki.heh.bald.pay.service.model.PayOrder;
 import wiki.heh.bald.pay.service.model.form.CreatePayOrderForm;
 import wiki.heh.bald.pay.service.model.form.PayQueryForm;
+import wiki.heh.bald.pay.service.model.vo.Result;
 import wiki.heh.bald.pay.service.service.PayOrderService;
 
 /**
@@ -31,20 +32,12 @@ public class PayOrderServiceController extends Notify4BasePay {
 
     @ApiOperation("创建支付")
     @PostMapping("pay/create")
-    public String createPayOrder(@RequestBody CreatePayOrderForm form) {
+    public Result createPayOrder(@RequestBody CreatePayOrderForm form) {
         _log.info("接收创建支付订单请求,form={}", form);
-        JSONObject retObj = new JSONObject();
-        try {
-            PayOrder payOrder = new PayOrder();
-            BeanUtils.copyProperties(form, payOrder);
-            int result = payOrderService.createPayOrder(payOrder);
-            retObj.put("result", result);
-        } catch (Exception e) {
-            retObj.put("code", "9999"); // 系统错误
-            retObj.put("msg", "系统错误");
-            e.printStackTrace();
-        }
-        return retObj.toJSONString();
+        PayOrder payOrder = new PayOrder();
+        BeanUtils.copyProperties(form, payOrder);
+        int result = payOrderService.createPayOrder(payOrder);
+        return Result.success(result);
     }
 
     @ApiOperation("支付查询")
@@ -65,7 +58,7 @@ public class PayOrderServiceController extends Notify4BasePay {
         }
         // 如果选择回调且支付状态为支付成功,则回调业务系统
         if (form.getExecuteNotify() && payOrder.getStatus() == PayConstant.PAY_STATUS_SUCCESS) {
-            this.doNotify(payOrder,false);
+            this.doNotify(payOrder, false);
         }
         retObj.put("result", JSON.toJSON(payOrder));
         _log.info("selectPayOrder >> {}", retObj);
