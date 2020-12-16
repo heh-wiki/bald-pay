@@ -7,10 +7,10 @@
         <artifactId>bald-pay</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>net.mfeng.mpay</groupId>
-    <artifactId>mpay-config</artifactId>
+
+    <artifactId>bald-pay-config</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>mpay-config</name>
+    <name>bald-pay-config</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>
@@ -24,7 +24,15 @@
         </dependency>
     </dependencies>
 
+
     <build>
+        <finalName>${project.name}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

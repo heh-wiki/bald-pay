@@ -13,6 +13,7 @@ public enum PayServiceErrorType {
     SYSTEM_ERROR                ("-1", "系统异常！"),
     MERCHANT_DOES_NOT_EXIST     ("900900", "商户不存在！"),
     PAY_ORDER_DOES_NOT_EXIST    ("900900", "支付订单不存在！"),
+    THIS_ORDER_IS_PAYING        ("900900", "订单正在支付或已支付！"),
     PRIVATE_KEY_DOES_NOT_EXIST    ("900900", "商户私钥不存在！"),
 
     MISSING_REQUEST_PARAM_ERROR ("8811200", "参数缺失"),

@@ -1,5 +1,5 @@
 server:
-  port: 9080
+  port: 9060
 
 spring:
   datasource:
@@ -14,10 +14,10 @@ mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 ali:
-  notify_url: http://jiutongtang.cn:19080/notify/pay/aliPayNotifyRes.htm
-  return_url: http://jiutongtang.cn:19080
+  notify_url: http://jiutongtang.cn:19060/notify/pay/aliPayNotifyRes.htm
+  return_url: http://jiutongtang.cn:19060
 wx:
-  notify_url: http://jiutongtang.cn:19080/notify/pay/wxPayNotifyRes.htm
+  notify_url: http://jiutongtang.cn:19060/notify/pay/wxPayNotifyRes.htm
 cert:
   root:
     path: /home/mpay/service/cert

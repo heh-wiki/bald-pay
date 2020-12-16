@@ -20,7 +20,7 @@ import wiki.heh.bald.pay.service.service.PayOrderService;
 /**
  * 支付订单接口
  *
- * @author hehua
+ * @author heh
  * @version v1.0
  */
 @Api(tags = "支付订单接口")
@@ -36,7 +36,7 @@ public class PayOrderServiceController extends Notify4BasePay {
         _log.info("接收创建支付订单请求,form={}", form);
         PayOrder payOrder = new PayOrder();
         BeanUtils.copyProperties(form, payOrder);
-        int result = payOrderService.createPayOrder(payOrder);
+        String result = payOrderService.createPayOrder(payOrder);
         return Result.success(result);
     }
 

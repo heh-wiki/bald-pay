@@ -7,10 +7,9 @@
         <artifactId>bald-pay</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>net.zhskg.mpay</groupId>
-    <artifactId>mpay-mgr</artifactId>
+    <artifactId>bald-pay-mgr</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>mpay-mgr</name>
+    <name>bald-pay-mgr</name>
     <description>Demo project for Spring Boot</description>
 
 
@@ -20,12 +19,27 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
     </dependencies>
 
     <build>
+        <finalName>${project.name}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

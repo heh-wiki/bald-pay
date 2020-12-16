@@ -19,7 +19,7 @@ import wiki.heh.bald.pay.service.service.MchInfoService;
 /**
  * 商户信息接口
  *
- * @author hehua
+ * @author heh
  * @version v1.0
  */
 @Api(tags = "商户信息接口",hidden = true)

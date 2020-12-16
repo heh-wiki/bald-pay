@@ -3,7 +3,7 @@ package wiki.heh.bald.pay.service.exception;
 
 /**
  * 服务异常
- * @author hehua
+ * @author heh
  * @date 2020/11/4
  */
 public final class ServiceException extends RuntimeException {

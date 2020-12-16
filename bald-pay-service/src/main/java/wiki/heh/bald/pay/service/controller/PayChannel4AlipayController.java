@@ -17,7 +17,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import wiki.heh.bald.pay.common.constant.PayConstant;
@@ -34,21 +33,22 @@ import wiki.heh.bald.pay.service.model.MchInfo;
 import wiki.heh.bald.pay.service.model.PayChannel;
 import wiki.heh.bald.pay.service.model.PayOrder;
 import wiki.heh.bald.pay.service.channel.alipay.AlipayConfig;
-import wiki.heh.bald.pay.service.model.form.AliQrPayForm;
+import wiki.heh.bald.pay.service.model.form.PayForm;
 import wiki.heh.bald.pay.service.model.vo.Result;
 import wiki.heh.bald.pay.service.service.MchInfoService;
 import wiki.heh.bald.pay.service.service.PayChannelService;
 import wiki.heh.bald.pay.service.service.PayOrderService;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 /**
  * 支付渠道接口:支付宝
  *
- * @author hehua
+ * @author heh
  * @version v1.0
- * @date 2017-07-05
+  * @date 2020-07-05
  */
 @Api(tags = "支付渠道接口:支付宝")
 @RestController
@@ -63,7 +63,7 @@ public class PayChannel4AlipayController {
     private AlipayConfig alipayConfig;
     @Autowired
     private MchInfoService mchInfoService;
-
+    private static final Byte WAIT_FOR_PAY = 0;//等待支付
     /**
      * 支付宝手机网站支付
      * 文档：https://docs.open.alipay.com/203/107090/
@@ -195,26 +195,36 @@ public class PayChannel4AlipayController {
         return BaldPayUtil.makeRetData(map, resKey);
     }
 
+    @GetMapping("/aliPay/appPay")
+    public Result appPay() {
+        PayForm form = new PayForm();
+            form.setPayOrderId("P0020201203180831000000");
+        Map<String, Object> map = (Map<String, Object>) doAliPayMobileReq(form).getData();
+        return Result.success(map.get("payParams"));
+    }
+
     /**
      * 支付宝APP支付,生产签名及请求支付宝的参数(注:不会向支付宝发请求)
      * 文档: https://docs.open.alipay.com/204/105465/
      *
-     * @param jsonParam
+     * @param form
      * @return
      */
     @ApiOperation("支付宝APP支付,生产签名及请求支付宝的参数(注:不会向支付宝发请求)")
     @PostMapping("/pay/channel/ali_mobile")
-    public String doAliPayMobileReq(@RequestParam String jsonParam) {
+    public Result<Map<String, Object>> doAliPayMobileReq(@RequestBody PayForm form) {
         String logPrefix = "【支付宝APP支付下单】";
-        JSONObject paramObj = JSON.parseObject(new String(MyBase64.decode(jsonParam)));
-        PayOrder payOrder = paramObj.getObject("payOrder", PayOrder.class);
+        PayOrder payOrder = Optional.ofNullable(payOrderService.selectPayOrder(form.getPayOrderId())).orElseThrow(
+                () -> new ServiceException(PayServiceErrorType.PAY_ORDER_DOES_NOT_EXIST)
+        );
+        if (!payOrder.getStatus().equals(WAIT_FOR_PAY)) throw new ServiceException(PayServiceErrorType.THIS_ORDER_IS_PAYING);
         String payOrderId = payOrder.getPayOrderId();
         String mchId = payOrder.getMchId();
         String channelId = payOrder.getChannelId();
         MchInfo mchInfo = mchInfoService.selectMchInfo(mchId);
         String resKey = mchInfo == null ? "" : mchInfo.getResKey();
         if ("".equals(resKey))
-            return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
+            return Result.fail(PayServiceErrorType.PAY_ORDER_DOES_NOT_EXIST);
         PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
         alipayConfig.init(payChannel.getParam());
         AlipayClient client = new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getApp_id(), alipayConfig.getRsa_private_key(), AlipayConfig.FORMAT, AlipayConfig.CHARSET, alipayConfig.getAlipay_public_key(), AlipayConfig.SIGNTYPE);
@@ -242,8 +252,8 @@ public class PayChannel4AlipayController {
         _log.info("###### 商户统一下单处理完成 ######");
         Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
         map.put("payOrderId", payOrderId);
-        map.put("payParams", payParams);
-        return BaldPayUtil.makeRetData(map, resKey);
+        map.put("sign", payParams);
+        return Result.sign(PayDigestUtil.getSign(map, mchInfo.getResKey(), "sign"), map);
     }
 
     /**
@@ -255,7 +265,7 @@ public class PayChannel4AlipayController {
      */
     @ApiOperation("支付宝当面付之扫码支付")
     @PostMapping("/pay/channel/ali_qr")
-    public Result doAliPayQrReq(@RequestBody AliQrPayForm form) {
+    public Result<Map<String, Object>> doAliPayQrReq(@RequestBody PayForm form) {
         String logPrefix = "【支付宝当面付之扫码支付下单】";
         PayOrder payOrder = Optional.ofNullable(payOrderService.selectPayOrder(form.getPayOrderId())).orElseThrow(
                 () -> new ServiceException(PayServiceErrorType.PAY_ORDER_DOES_NOT_EXIST)
@@ -305,10 +315,8 @@ public class PayChannel4AlipayController {
         payOrderService.updateStatus4Ing(payOrder.getPayOrderId(), null);
         _log.info("{}生成请求支付宝数据,req={}", logPrefix, alipay_request.getBizModel());
         _log.info("###### 商户统一下单处理完成 ######");
-        Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
-        map.put("payOrderId", payOrder.getPayOrderId());
-        map.put("payUrl", payUrl);
-        return Result.sign(PayDigestUtil.getSign(map,  mchInfo.getResKey(), "payParams"),map);
+        Map<String, Object> map =JSON.parseObject(payUrl);
+        return Result.sign(PayDigestUtil.getSign(map, mchInfo.getResKey(), "payParams"), map);
     }
 
 }

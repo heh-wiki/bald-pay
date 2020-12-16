@@ -7,12 +7,10 @@
         <artifactId>bald-pay</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>net.mfeng.mpay</groupId>
-    <artifactId>mpay-api</artifactId>
+    <artifactId>bald-pay-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>mpay-api</name>
+    <name>bald-pay-api</name>
     <description>Demo project for Spring Boot</description>
-
 
     <dependencies>
         <dependency>
@@ -21,15 +19,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
     </dependencies>
-
 
     <build>
         <finalName>${project.name}</finalName>

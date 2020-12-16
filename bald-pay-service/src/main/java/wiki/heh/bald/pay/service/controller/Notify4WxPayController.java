@@ -34,7 +34,7 @@ import java.util.Map;
 
 /**
  *  接收处理微信通知
- * @author hehua
+ * @author heh
  * @version v1.0
  */
 @Api(tags = "接收处理微信通知",hidden = true)

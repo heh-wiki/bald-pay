@@ -14,8 +14,8 @@ import static wiki.heh.bald.pay.common.util.MySeq.getPay;
 
 /**
  *
- * @author hehua
- * @date 2017-07-05
+ * @author heh
+  * @date 2020-07-05
  * @version v1.0
 
  */
@@ -25,9 +25,9 @@ public class PayOrderService {
     @Autowired
     private PayOrderMapper payOrderMapper;
 
-    public int createPayOrder(PayOrder payOrder) {
+    public String createPayOrder(PayOrder payOrder) {
         payOrder.setPayOrderId(getPay());
-        return payOrderMapper.insertSelective(payOrder);
+        return payOrderMapper.insertSelective(payOrder)>0?payOrder.getPayOrderId():"0";
     }
 
     public PayOrder selectPayOrder(String payOrderId) {

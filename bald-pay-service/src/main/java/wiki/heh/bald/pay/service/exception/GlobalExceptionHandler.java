@@ -11,7 +11,7 @@ import wiki.heh.bald.pay.service.model.vo.Result;
 
 /**
  * 全局异常处理
- * @author hehua
+ * @author heh
  * @date 2020/11/4
  */
 @ControllerAdvice(basePackages = "wiki.heh.bald.pay.service")

@@ -1,5 +1,5 @@
 server:
-  port: 3010
+  port: 9030
 
 hystrix:
   command:
@@ -10,6 +10,6 @@ hystrix:
             timeoutInMilliseconds: 60000
 
 logging:
-  file: ./log/mpay-web.log
+  file: ./log/bald-pay-web.log
 
 
