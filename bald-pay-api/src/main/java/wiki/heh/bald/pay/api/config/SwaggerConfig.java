@@ -20,30 +20,6 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
-
-//    private List<SecurityScheme> securitySchemes() {
-//        List<SecurityScheme> securitySchemes = new ArrayList<>();
-//        securitySchemes.add(new ApiKey("Authorization", "Authorization", "header"));
-//        return securitySchemes;
-//    }
-//
-//    private List<SecurityContext> securityContexts() {
-//        List<SecurityContext> securityContexts = new ArrayList<>();
-//        securityContexts.add(SecurityContext.builder()
-//                .securityReferences(defaultAuth())
-//                .forPaths(PathSelectors.regex("^(?!auth).*$")).build());
-//        return securityContexts;
-//    }
-//
-//    private List<SecurityReference> defaultAuth() {
-//        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-//        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-//        authorizationScopes[0] = authorizationScope;
-//        List<SecurityReference> securityReferences = new ArrayList<>();
-//        securityReferences.add(new SecurityReference("Authorization", authorizationScopes));
-//        return securityReferences;
-//    }
-
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.OAS_30)
@@ -58,10 +34,10 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("官网系统API")
-                .description("官网前台展示,系统管理")
+                .title("支付中心APIs")
+                .description("支付中心")
                 .contact(new Contact("", "", ""))
-                .termsOfServiceUrl("http://zhskg.cn")
+                .termsOfServiceUrl("http://heh.wiki")
                 .version("1.0.0")
                 .build();
     }
