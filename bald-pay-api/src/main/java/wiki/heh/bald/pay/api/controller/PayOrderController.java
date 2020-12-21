@@ -10,10 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import wiki.heh.bald.pay.api.entity.form.UnifiedPayForm;
+import wiki.heh.bald.pay.api.entity.vo.Result;
+import wiki.heh.bald.pay.api.exception.PayServiceErrorType;
+import wiki.heh.bald.pay.api.exception.ServiceException;
+import wiki.heh.bald.pay.api.mq.Mq4PayNotify;
 import wiki.heh.bald.pay.api.service.IMchInfoService;
 import wiki.heh.bald.pay.api.service.IPayChannelService;
 import wiki.heh.bald.pay.api.service.IPayOrderService;
@@ -21,7 +23,13 @@ import wiki.heh.bald.pay.common.constant.PayConstant;
 import wiki.heh.bald.pay.common.util.BaldPayUtil;
 import wiki.heh.bald.pay.common.util.MySeq;
 
-
+/**
+ * 支付订单,包括:统一下单,订单查询,补单等接口
+ *
+ * @author heh
+ * @version v1.0
+ * @date 2020-12-18
+ */
 @Api(tags = "支付订单,包括:统一下单,订单查询,补单等接口")
 @RestController
 public class PayOrderController {
@@ -32,6 +40,8 @@ public class PayOrderController {
     private IPayChannelService payChannelService;
     @Autowired
     private IMchInfoService mchInfoService;
+    @Autowired
+    private Mq4PayNotify mq4PayNotify;
 
     /**
      * 统一下单接口:
@@ -40,37 +50,40 @@ public class PayOrderController {
      * 3)根据商户选择渠道,调用支付服务进行下单
      * 4)返回下单数据
      *
-     * @param params
+     * @param form
      * @return
      */
-    @ApiOperation("统一下单接口")
-    @RequestMapping(value = "/api/pay/create_order")
-    public String payOrder(@RequestParam String params) {
-        JSONObject po = JSONObject.parseObject(params);
-        return payOrder(po);
-    }
-
+//    @ApiOperation("统一下单接口")
+//    @RequestMapping(value = "/api/pay/create_order")
+//    public String payOrder(@RequestParam String params) {
+//        JSONObject po = JSONObject.parseObject(params);
+//        return payOrder(po);
+//    }
     @ApiOperation("商户统一下单")
-    @RequestMapping(value = "/api/pay/create_order", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String payOrder(@RequestBody JSONObject params) {
+    @PostMapping("api/pay/unified")
+    public Result payOrder(@RequestBody UnifiedPayForm form) {
         _log.info("###### 开始接收商户统一下单请求 ######");
         String logPrefix = "【商户统一下单】";
         try {
             JSONObject payContext = new JSONObject();
+            JSONObject params = JSONObject.parseObject(JSON.toJSONString(form));
             JSONObject payOrder = null;
             // 验证参数有效性
             Object object = validateParams(params, payContext);
             if (object instanceof String) {
                 _log.info("{}参数校验不通过:{}", logPrefix, object);
-                return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, object.toString(), null, null));
+                return Result.fail("880111", object.toString());
+//                return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, object.toString(), null, null));
             }
             if (object instanceof JSONObject) payOrder = (JSONObject) object;
             if (payOrder == null)
-                return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "支付中心下单失败", null, null));
+                throw new ServiceException(PayServiceErrorType.RET_BIZ_PAY_CREATE_FAIL);
+//                return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "支付中心下单失败", null, null));
             int result = payOrderService.createPayOrder(payOrder);
             _log.info("{}创建支付订单,结果:{}", logPrefix, result);
             if (result != 1) {
-                return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "创建支付订单失败", null, null));
+                throw new ServiceException(PayServiceErrorType.FAILED_TO_CREATE_PAYMENT_ORDER);
+//                return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "创建支付订单失败", null, null));
             }
             String channelId = payOrder.getString("channelId");
             switch (channelId) {
@@ -82,6 +95,7 @@ public class PayOrderController {
                     return payOrderService.doWxPayReq(PayConstant.WxConstant.TRADE_TYPE_NATIVE, payOrder, payContext.getString("resKey"));
                 case PayConstant.PAY_CHANNEL_WX_MWEB:
                     return payOrderService.doWxPayReq(PayConstant.WxConstant.TRADE_TYPE_MWEB, payOrder, payContext.getString("resKey"));
+
                 case PayConstant.PAY_CHANNEL_ALIPAY_MOBILE:
                     return payOrderService.doAliPayReq(channelId, payOrder, payContext.getString("resKey"));
                 case PayConstant.PAY_CHANNEL_ALIPAY_PC:
@@ -91,11 +105,14 @@ public class PayOrderController {
                 case PayConstant.PAY_CHANNEL_ALIPAY_QR:
                     return payOrderService.doAliPayReq(channelId, payOrder, payContext.getString("resKey"));
                 default:
-                    return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "不支持的支付渠道类型[channelId=" + channelId + "]", null, null));
+                    return Result.fail(PayServiceErrorType.RET_BIZ_DATA_NOT_EXISTS.getCode(), "不支持的支付渠道类型[channelId=" + channelId + "]");
+//                    return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "不支持的支付渠道类型[channelId=" + channelId + "]", null, null));
             }
         } catch (Exception e) {
-            _log.error("");
-            return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "支付中心系统异常", null, null));
+            e.printStackTrace();
+            _log.error(e.getMessage());
+            return Result.fail(PayServiceErrorType.SYSTEM_ERROR);
+//            return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "支付中心系统异常", null, null));
         }
     }
 
@@ -197,10 +214,10 @@ public class PayOrderController {
         }
 
         // 签名信息
-        if (StringUtils.isEmpty(sign)) {
-            errorMessage = "request params[sign] error.";
-            return errorMessage;
-        }
+//        if (StringUtils.isEmpty(sign)) {
+//            errorMessage = "request params[sign] error.";
+//            return errorMessage;
+//        }
 
         // 查询商户信息
         JSONObject mchInfo = mchInfoService.getByMchId(mchId);
@@ -233,10 +250,10 @@ public class PayOrderController {
 
         // 验证签名数据
         boolean verifyFlag = BaldPayUtil.verifyPaySign(params, reqKey);
-        if (!verifyFlag) {
-            errorMessage = "Verify XX pay sign failed.";
-            return errorMessage;
-        }
+//        if (!verifyFlag) {
+//            errorMessage = "Verify XX pay sign failed.";
+//            return errorMessage;
+//        }
         // 验证参数通过,返回JSONObject对象
         JSONObject payOrder = new JSONObject();
         payOrder.put("payOrderId", MySeq.getPay());

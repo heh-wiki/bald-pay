@@ -18,6 +18,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * 接收处理支付宝通知
+ *
+ * @author heh
+ * @version v1.0
+ * @date 2020-12-18
+ */
 @Api(tags = "接收处理支付宝通知")
 @RestController
 public class Notify4AliPayController {

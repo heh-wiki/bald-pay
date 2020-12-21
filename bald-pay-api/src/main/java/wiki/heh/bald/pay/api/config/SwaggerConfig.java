@@ -15,7 +15,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * swagger 配置类
+ *
+ * @author heh
+ * @version v1.0
+ * @date 2020-12-18
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -38,7 +44,7 @@ public class SwaggerConfig {
                 .description("支付中心")
                 .contact(new Contact("", "", ""))
                 .termsOfServiceUrl("http://heh.wiki")
-                .version("1.0.0")
+                .version("v1.0.0")
                 .build();
     }
 }
