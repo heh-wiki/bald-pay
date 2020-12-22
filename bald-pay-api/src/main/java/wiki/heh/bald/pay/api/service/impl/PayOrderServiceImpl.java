@@ -103,7 +103,7 @@ public class PayOrderServiceImpl extends BaseService implements IPayOrderService
         Result result = null;
         switch (channelId) {
             case PayConstant.PAY_CHANNEL_ALIPAY_MOBILE :
-//                result = payChannel4AliService.doAliPayMobileReq(jsonParam);
+                result = payChannel4AliService.doAliPayMobileReq(jsonParam,resKey);
                 break;
             case PayConstant.PAY_CHANNEL_ALIPAY_PC :
 //                result = payChannel4AliService.doAliPayPcReq(jsonParam);

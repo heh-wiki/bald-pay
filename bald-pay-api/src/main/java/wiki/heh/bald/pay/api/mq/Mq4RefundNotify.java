@@ -3,6 +3,7 @@ package wiki.heh.bald.pay.api.mq;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.activemq.ScheduledMessage;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import wiki.heh.bald.pay.common.util.StrUtil;
 import javax.jms.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import static wiki.heh.bald.pay.api.mq.MqConfig.PAY_NOTIFY_QUEUE_NAME;
 
 /**
  * 业务通知MQ实现
@@ -52,7 +55,7 @@ public class Mq4RefundNotify extends BaseService4RefundOrder {
 
     public void send(String msg) {
         _log.info("发送MQ消息:msg={}", msg);
-        this.jmsTemplate.convertAndSend(this.refundNotifyQueue, msg);
+        this.jmsTemplate.convertAndSend(new ActiveMQQueue(MqConfig.REFUND_NOTIFY_QUEUE_NAME), msg);
     }
 
     /**
@@ -101,7 +104,6 @@ public class Mq4RefundNotify extends BaseService4RefundOrder {
         if (PayConstant.CHANNEL_NAME_WX.equalsIgnoreCase(channelName)) {
             resultMap = payChannel4WxService.doWxRefundReq(jsonParam);
         } else if (PayConstant.CHANNEL_NAME_ALIPAY.equalsIgnoreCase(channelName)) {
-            _log.error("+++jsonParam:{}"+jsonParam);
             resultMap = payChannel4AliService.doAliRefundReq(jsonParam);
         } else {
             _log.warn("不支持的退款渠道,停止退款处理.refundOrderId={},channelName={}", refundOrderId, channelName);

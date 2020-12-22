@@ -31,7 +31,6 @@ public class QueryPayOrderController {
 
     @Autowired
     private IPayOrderService payOrderService;
-
     @Autowired
     private IMchInfoService mchInfoService;
 

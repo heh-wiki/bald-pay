@@ -24,13 +24,17 @@ import wiki.heh.bald.pay.common.util.BaldPayUtil;
 import wiki.heh.bald.pay.common.util.MySeq;
 
 /**
- * 支付订单,包括:统一下单,订单查询,补单等接口
+ * 统一下单接口:
+ * 1)先验证接口参数以及签名信息
+ * 2)验证通过创建支付订单
+ * 3)根据商户选择渠道,调用支付服务进行下单
+ * 4)返回下单数据
  *
  * @author heh
  * @version v1.0
  * @date 2020-12-18
  */
-@Api(tags = "支付订单,包括:统一下单,订单查询,补单等接口")
+@Api(tags = "统一下单接口")
 @RestController
 public class PayOrderController {
     private final Logger _log = LoggerFactory.getLogger(PayOrderController.class);
@@ -40,27 +44,9 @@ public class PayOrderController {
     private IPayChannelService payChannelService;
     @Autowired
     private IMchInfoService mchInfoService;
-    @Autowired
-    private Mq4PayNotify mq4PayNotify;
 
-    /**
-     * 统一下单接口:
-     * 1)先验证接口参数以及签名信息
-     * 2)验证通过创建支付订单
-     * 3)根据商户选择渠道,调用支付服务进行下单
-     * 4)返回下单数据
-     *
-     * @param form
-     * @return
-     */
-//    @ApiOperation("统一下单接口")
-//    @RequestMapping(value = "/api/pay/create_order")
-//    public String payOrder(@RequestParam String params) {
-//        JSONObject po = JSONObject.parseObject(params);
-//        return payOrder(po);
-//    }
     @ApiOperation("商户统一下单")
-    @PostMapping("api/pay/unified")
+    @PostMapping("api/pay/create")
     public Result payOrder(@RequestBody UnifiedPayForm form) {
         _log.info("###### 开始接收商户统一下单请求 ######");
         String logPrefix = "【商户统一下单】";

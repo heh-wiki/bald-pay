@@ -25,8 +25,7 @@ public class ActiveMq4PayNotify extends Mq4PayNotify {
         return new ActiveMQQueue(PAY_NOTIFY_QUEUE_NAME);
     }
 	
-	@Autowired
-    private Queue payNotifyQueue;
+
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -34,13 +33,13 @@ public class ActiveMq4PayNotify extends Mq4PayNotify {
 	@Override
 	public void send(String msg) {
 		_log.info("发送MQ消息:msg={}", msg);
-        jmsTemplate.convertAndSend(payNotifyQueue, msg);
+        jmsTemplate.convertAndSend(new ActiveMQQueue(PAY_NOTIFY_QUEUE_NAME), msg);
 	}
 
 	@Override
 	public void send(String msg, long delay) {
 		_log.info("发送MQ延时消息:msg={},delay={}", msg, delay);
-        jmsTemplate.send(this.payNotifyQueue, new MessageCreator() {
+        jmsTemplate.send(new ActiveMQQueue(PAY_NOTIFY_QUEUE_NAME), new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 TextMessage tm = session.createTextMessage(msg);
                 tm.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_DELAY, delay);

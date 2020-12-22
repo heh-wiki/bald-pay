@@ -32,7 +32,7 @@ public interface IPayChannel4AliService {
      * @param jsonParam
      * @return
      */
-    Map doAliPayMobileReq(String jsonParam);
+    Result doAliPayMobileReq(String jsonParam, String resKey);
 
     /**
      * 当面付(二维码支付)

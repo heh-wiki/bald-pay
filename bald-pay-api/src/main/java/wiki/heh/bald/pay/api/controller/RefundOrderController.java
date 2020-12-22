@@ -1,5 +1,6 @@
 package wiki.heh.bald.pay.api.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -9,13 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import wiki.heh.bald.pay.api.entity.form.UnifiedRefundForm;
 import wiki.heh.bald.pay.api.service.IMchInfoService;
 import wiki.heh.bald.pay.api.service.IPayChannelService;
 import wiki.heh.bald.pay.api.service.IPayOrderService;
-import wiki.heh.bald.pay.api.service.IRefundOrderService;
 import wiki.heh.bald.pay.api.service.impl.RefundOrderService;
 import wiki.heh.bald.pay.common.constant.PayConstant;
 import wiki.heh.bald.pay.common.util.BaldPayUtil;
@@ -24,47 +25,37 @@ import wiki.heh.bald.pay.common.util.MySeq;
 import java.util.Map;
 
 /**
- * 退款订单
+ * 统一退款接口:
+ * 1)先验证接口参数以及签名信息
+ * 2)验证通过创建支付订单
+ * 3)根据商户选择渠道,调用支付服务进行下单
+ * 4)返回下单数据
  *
  * @author hehua
  * @version v1.0
  * @date 2020/12/18
  */
-@Api(tags = "退款订单")
+@Api(tags = "统一退款接口")
 @RestController
 public class RefundOrderController {
 
     private final Logger _log = LoggerFactory.getLogger(RefundOrderController.class);
-
     @Autowired
     private RefundOrderService refundOrderService;
-
     @Autowired
     private IPayOrderService payOrderService;
-
     @Autowired
     private IPayChannelService payChannelService;
-
     @Autowired
     private IMchInfoService mchInfoService;
 
-    /**
-     * 统一转账接口:
-     * 1)先验证接口参数以及签名信息
-     * 2)验证通过创建支付订单
-     * 3)根据商户选择渠道,调用支付服务进行下单
-     * 4)返回下单数据
-     *
-     * @param params
-     * @return
-     */
     @ApiOperation("创建退款订单")
-    @PostMapping("/api/refund/create_order")
-    public String payOrder(@RequestParam String params) {
+    @PostMapping("/api/refund/create")
+    public String payOrder(@RequestBody UnifiedRefundForm form) {
         _log.info("###### 开始接收商户统一退款请求 ######");
         String logPrefix = "【商户统一退款】";
         try {
-            JSONObject po = JSONObject.parseObject(params);
+            JSONObject po = JSONObject.parseObject(JSON.toJSONString(form));
             JSONObject refundContext = new JSONObject();
             JSONObject refundOrder = null;
             // 验证参数有效性
@@ -91,7 +82,8 @@ public class RefundOrderController {
             map.put("refundOrderId", refundOrder.getString("refundOrderId"));
             return BaldPayUtil.makeRetData(map, refundContext.getString("resKey"));
         } catch (Exception e) {
-            _log.error("");
+            e.printStackTrace();
+            _log.error(e.getLocalizedMessage());
             return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "支付中心系统异常", null, null));
         }
     }
@@ -158,10 +150,10 @@ public class RefundOrderController {
         }
 
         // 签名信息
-        if (StringUtils.isEmpty(sign)) {
-            errorMessage = "request params[sign] error.";
-            return errorMessage;
-        }
+//        if (StringUtils.isEmpty(sign)) {
+//            errorMessage = "request params[sign] error.";
+//            return errorMessage;
+//        }
 
         // 查询商户信息
         JSONObject mchInfo = mchInfoService.getByMchId(mchId);
@@ -194,11 +186,11 @@ public class RefundOrderController {
         refundContext.put("channelName", payChannel.getString("channelName"));
 
         // 验证签名数据
-        boolean verifyFlag = BaldPayUtil.verifyPaySign(params, reqKey);
-        if (!verifyFlag) {
-            errorMessage = "Verify XX refund sign failed.";
-            return errorMessage;
-        }
+//        boolean verifyFlag = BaldPayUtil.verifyPaySign(params, reqKey);
+//        if (!verifyFlag) {
+//            errorMessage = "Verify XX refund sign failed.";
+//            return errorMessage;
+//        }
 
         // 验证支付订单是否存在
         JSONObject payOrder = payOrderService.queryPayOrder(mchId, payOrderId, mchOrderNo, "false");

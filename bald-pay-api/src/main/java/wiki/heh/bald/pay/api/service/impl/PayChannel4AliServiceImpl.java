@@ -184,19 +184,19 @@ public class PayChannel4AliServiceImpl extends BaseService implements IPayChanne
     }
 
     @Override
-    public Map doAliPayMobileReq(String jsonParam) {
+    public Result doAliPayMobileReq(String jsonParam,String resKey) {
         String logPrefix = "【支付宝APP支付下单】";
         BaseParam baseParam = JsonUtil.getObjectFromJson(jsonParam, BaseParam.class);
         Map<String, Object> bizParamMap = baseParam.getBizParamMap();
         if (ObjectValidUtil.isInvalid(bizParamMap)) {
             _log.warn("{}失败, {}. jsonParam={}", logPrefix, RetEnum.RET_PARAM_NOT_FOUND.getMessage(), jsonParam);
-            return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_NOT_FOUND);
+            throw new ServiceException(PayServiceErrorType.RET_PARAM_NOT_FOUND);
         }
         JSONObject payOrderObj = baseParam.isNullValue("payOrder") ? null : JSONObject.parseObject(bizParamMap.get("payOrder").toString());
         PayOrder payOrder = BeanConvertUtils.map2Bean(payOrderObj, PayOrder.class);
         if (ObjectValidUtil.isInvalid(payOrder)) {
             _log.warn("{}失败, {}. jsonParam={}", logPrefix, RetEnum.RET_PARAM_INVALID.getMessage(), jsonParam);
-            return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_INVALID);
+            throw new ServiceException(PayServiceErrorType.RET_PARAM_INVALID);
         }
         String payOrderId = payOrder.getPayOrderId();
         String mchId = payOrder.getMchId();
@@ -228,8 +228,11 @@ public class PayChannel4AliServiceImpl extends BaseService implements IPayChanne
         _log.info("###### 商户统一下单处理完成 ######");
         Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
         map.put("payOrderId", payOrderId);
-        map.put("payParams", payParams);
-        return RpcUtil.createBizResult(baseParam, map);
+        map.put("sign", payParams);
+        map.remove("msg");
+        map.remove("code");
+//        map.put("payOrderId", payOrderId);
+        return Result.sign(PayDigestUtil.getSign(map, resKey, "payParams"), map);
     }
 
     @Override
@@ -333,10 +336,10 @@ public class PayChannel4AliServiceImpl extends BaseService implements IPayChanne
         AlipayFundTransToaccountTransferModel model = new AlipayFundTransToaccountTransferModel();
         model.setOutBizNo(transOrderId);
         model.setPayeeType("ALIPAY_LOGONID");                            // 收款方账户类型
-        model.setPayeeAccount(transOrder.getChannelUser());              // 收款方账户
+        model.setPayeeAccount(transOrder.getChannelUser());
+        model.setPayeeRealName(transOrder.getUserName());// 收款方账户
         model.setAmount(AmountUtil.convertCent2Dollar(transOrder.getAmount().toString()));
-        model.setPayerShowName("支付转账");
-        model.setPayeeRealName(transOrder.getUserName());
+        model.setPayerShowName("支付转账");//显示在收款方的账单详情页。如果该字段不传，则默认显示付款方的支付宝认证姓名或单位名称
         model.setRemark(transOrder.getRemarkInfo());
         request.setBizModel(model);
         Map<String, Object> map = new HashMap<>();
@@ -432,7 +435,7 @@ public class PayChannel4AliServiceImpl extends BaseService implements IPayChanne
         model.setTradeNo(refundOrder.getChannelPayOrderNo());
         model.setOutRequestNo(refundOrderId);
         model.setRefundAmount(AmountUtil.convertCent2Dollar(refundOrder.getRefundAmount().toString()));
-        model.setRefundReason("正常退款");
+        model.setRefundReason(refundOrder.getRemarkInfo());
         request.setBizModel(model);
         Map<String, Object> map = new HashMap<>();
         map.put("refundOrderId", refundOrderId);
