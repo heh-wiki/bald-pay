@@ -47,7 +47,7 @@ public class TransOrderController {
     private IMchInfoService mchInfoService;
 
     @ApiOperation("创建转账")
-    @PostMapping( "/api/trans/create")
+    @PostMapping( "/api/transfer/create")
     public String payOrder(@RequestBody UnifiedTransForm form) {
         _log.info("###### 开始接收商户统一转账请求 ######");
         String logPrefix = "【商户统一转账】";

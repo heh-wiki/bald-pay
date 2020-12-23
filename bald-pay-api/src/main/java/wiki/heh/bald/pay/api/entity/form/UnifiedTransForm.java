@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author heh
  * @date 2020/12/21
  */
-@ApiModel("统一退款请求参数")
+@ApiModel("统一转账请求参数")
 public class UnifiedTransForm {
     @ApiModelProperty(value = "商户ID", example = "10000000")
     private String mchId;

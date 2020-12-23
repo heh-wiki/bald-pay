@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import wiki.heh.bald.pay.api.entity.po.TransOrder;
 import wiki.heh.bald.pay.api.exception.PayServiceErrorType;
 import wiki.heh.bald.pay.api.exception.ServiceException;
-import wiki.heh.bald.pay.api.mq.Mq4TransNotify;
-import wiki.heh.bald.pay.api.service.BaseService4TransOrder;
+import wiki.heh.bald.pay.api.mq.Mq4TransferNotify;
+import wiki.heh.bald.pay.api.service.BaseService4TransferOrder;
 import wiki.heh.bald.pay.api.service.ITransOrderService;
 import wiki.heh.bald.pay.common.domain.BaseParam;
 import wiki.heh.bald.pay.common.enumm.RetEnum;
@@ -27,12 +27,12 @@ import java.util.Map;
  * @date 2020-12-18
  */
 @Service
-public class TransOrderServiceImpl extends BaseService4TransOrder implements ITransOrderService {
+public class TransOrderServiceImpl extends BaseService4TransferOrder implements ITransOrderService {
 
     private static final Logger _log = LoggerFactory.getLogger(TransOrderServiceImpl.class);
 
     @Autowired
-    private Mq4TransNotify mq4TransNotify;
+    private Mq4TransferNotify mq4TransNotify;
 
     @Override
     public int create(JSONObject transOrder1) {

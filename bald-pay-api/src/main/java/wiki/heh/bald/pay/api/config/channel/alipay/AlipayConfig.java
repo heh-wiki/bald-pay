@@ -26,8 +26,7 @@ public class AlipayConfig {
 
     private String return_url;
     // 请求网关地址
-//    private String url = "https://openapi.alipay.com/gateway.do";
-    private String url = "https://openapi.alipaydev.com/gateway.do";
+    private String url = "https://openapi.alipay.com/gateway.do";
 
     // 编码
     public static String CHARSET = "UTF-8";

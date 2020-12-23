@@ -12,8 +12,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 import wiki.heh.bald.pay.api.entity.po.TransOrder;
-import wiki.heh.bald.pay.api.service.BaseNotify4MchTrans;
-import wiki.heh.bald.pay.api.service.BaseService4TransOrder;
+import wiki.heh.bald.pay.api.service.BaseNotify4MchTransfer;
+import wiki.heh.bald.pay.api.service.BaseService4TransferOrder;
 import wiki.heh.bald.pay.api.service.IPayChannel4AliService;
 import wiki.heh.bald.pay.api.service.IPayChannel4WxService;
 import wiki.heh.bald.pay.common.constant.PayConstant;
@@ -31,7 +31,7 @@ import java.util.Map;
  * @date 2020-12-18
  */
 @Component
-public class Mq4TransNotify extends BaseService4TransOrder {
+public class Mq4TransferNotify extends BaseService4TransferOrder {
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -43,9 +43,9 @@ public class Mq4TransNotify extends BaseService4TransOrder {
     private IPayChannel4AliService payChannel4AliService;
 
     @Autowired
-    private BaseNotify4MchTrans baseNotify4MchTrans;
+    private BaseNotify4MchTransfer baseNotify4MchTrans;
 
-    private static final Logger _log = LoggerFactory.getLogger(Mq4TransNotify.class);
+    private static final Logger _log = LoggerFactory.getLogger(Mq4TransferNotify.class);
 
     public void send(String msg) {
         _log.info("发送MQ消息:msg={}", msg);

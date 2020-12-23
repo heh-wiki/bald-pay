@@ -27,9 +27,9 @@ import java.util.Map;
  * @date 2020-12-18
  */
 @Component
-public class BaseNotify4MchTrans extends BaseService4TransOrder {
+public class BaseNotify4MchTransfer extends BaseService4TransferOrder {
 
-	private static final Logger _log = LoggerFactory.getLogger(BaseNotify4MchTrans.class);
+	private static final Logger _log = LoggerFactory.getLogger(BaseNotify4MchTransfer.class);
 
 	@Autowired
 	private Mq4MchTransNotify mq4MchTransNotify;

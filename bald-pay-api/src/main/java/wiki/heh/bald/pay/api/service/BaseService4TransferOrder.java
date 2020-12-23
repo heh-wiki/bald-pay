@@ -1,7 +1,6 @@
 package wiki.heh.bald.pay.api.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import wiki.heh.bald.pay.api.entity.po.TransOrder;
@@ -21,7 +20,7 @@ import java.util.List;
  * @date 2020-12-18
  */
 @Service
-public class BaseService4TransOrder extends BaseService{
+public class BaseService4TransferOrder extends BaseService{
 
     @Resource
     private TransOrderMapper transOrderMapper;

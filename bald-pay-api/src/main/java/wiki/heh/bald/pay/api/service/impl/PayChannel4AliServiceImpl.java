@@ -27,7 +27,7 @@ import wiki.heh.bald.pay.api.exception.PayServiceErrorType;
 import wiki.heh.bald.pay.api.exception.ServiceException;
 import wiki.heh.bald.pay.api.service.BaseService;
 import wiki.heh.bald.pay.api.service.BaseService4PayOrder;
-import wiki.heh.bald.pay.api.service.BaseService4TransOrder;
+import wiki.heh.bald.pay.api.service.BaseService4TransferOrder;
 import wiki.heh.bald.pay.api.service.IPayChannel4AliService;
 import wiki.heh.bald.pay.common.constant.PayConstant;
 import wiki.heh.bald.pay.common.domain.BaseParam;
@@ -48,7 +48,7 @@ public class PayChannel4AliServiceImpl extends BaseService implements IPayChanne
     private static final Logger _log = LoggerFactory.getLogger(PayChannel4AliServiceImpl.class);
 
     @Autowired
-    BaseService4TransOrder baseService4TransOrder;
+    BaseService4TransferOrder baseService4TransferOrder;
 
     @Autowired
     BaseService4PayOrder baseService4PayOrder;
@@ -329,7 +329,7 @@ public class PayChannel4AliServiceImpl extends BaseService implements IPayChanne
         String transOrderId = transOrder.getTransOrderId();
         String mchId = transOrder.getMchId();
         String channelId = transOrder.getChannelId();
-        PayChannel payChannel = baseService4TransOrder.baseSelectPayChannel(mchId, channelId);
+        PayChannel payChannel = baseService4TransferOrder.baseSelectPayChannel(mchId, channelId);
         alipayConfig.init(payChannel.getParam());
         AlipayClient client = new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getApp_id(), alipayConfig.getRsa_private_key(), AlipayConfig.FORMAT, AlipayConfig.CHARSET, alipayConfig.getAlipay_public_key(), AlipayConfig.SIGNTYPE);
         AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();

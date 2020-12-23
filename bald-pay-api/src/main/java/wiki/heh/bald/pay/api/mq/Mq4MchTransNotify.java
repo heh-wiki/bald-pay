@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import wiki.heh.bald.pay.api.service.BaseService4TransOrder;
+import wiki.heh.bald.pay.api.service.BaseService4TransferOrder;
 
 import javax.jms.Queue;
 
@@ -26,7 +26,7 @@ public class Mq4MchTransNotify extends Mq4MchNotify {
     private Queue mchTransNotifyQueue;
 
     @Autowired
-    private BaseService4TransOrder baseService4TransOrder;
+    private BaseService4TransferOrder baseService4TransferOrder;
 
     private static final Logger _log = LoggerFactory.getLogger(Mq4MchTransNotify.class);
 
@@ -52,7 +52,7 @@ public class Mq4MchTransNotify extends Mq4MchNotify {
         if("success".equalsIgnoreCase(httpResult)){
             // 修改支付订单表
             try {
-                int result = baseService4TransOrder.baseUpdateStatus4Complete(orderId);
+                int result = baseService4TransferOrder.baseUpdateStatus4Complete(orderId);
                 _log.info("{}修改payOrderId={},订单状态为处理完成->{}", logPrefix, orderId, result == 1 ? "成功" : "失败");
             } catch (Exception e) {
                 _log.error( "修改订单状态为处理完成异常");
