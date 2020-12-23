@@ -38,8 +38,8 @@ import java.util.Map;
 
 /**
  *  支付渠道接口:微信
- * @author hehua
- * @date 2017-07-05
+ * @author heh
+  * @date 2020-07-05
  * @version v1.0
 
  */

@@ -1,0 +1,15 @@
+server:
+  port: 9030
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+logging:
+  file: ./log/bald-pay-web.log
+
+

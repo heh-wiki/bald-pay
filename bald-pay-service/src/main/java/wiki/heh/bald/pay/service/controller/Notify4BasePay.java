@@ -27,9 +27,9 @@ import java.util.Map;
 /**
  * 支付通知处理基类
  *
- * @author hehua
+ * @author heh
  * @version v1.0
- * @date 2017-07-05
+  * @date 2020-07-05
  */
 @Component
 public class Notify4BasePay {

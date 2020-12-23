@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: baldpay-config
+    name: bald-pay-config
   cloud:
     config:
       server:
@@ -12,9 +12,9 @@ spring:
   profiles:
      active: native
 
-security:
-  user:
-    password: mpay
+#security:
+#  user:
+#    password: baldpay
 
 eureka:
   client:
@@ -22,5 +22,5 @@ eureka:
       defaultZone: http://localhost:9000/eureka/
 
 logging:
-  file: ./log/mpay-config.log
+  file: ./log/bald-pay-config.log
 

@@ -19,9 +19,9 @@ import wiki.heh.bald.pay.service.service.PayChannelService;
 /**
  * 支付渠道接口
  *
- * @author hehua
+ * @author heh
  * @version v1.0
- * @date 2017-07-05
+  * @date 2020-07-05
  */
 @Api(tags = "支付渠道接口")
 @RestController
