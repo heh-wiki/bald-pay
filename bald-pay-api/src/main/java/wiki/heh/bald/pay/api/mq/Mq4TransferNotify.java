@@ -34,6 +34,9 @@ import java.util.Map;
 public class Mq4TransferNotify extends BaseService4TransferOrder {
 
     @Autowired
+    private Queue transNotifyQueue;
+
+    @Autowired
     private JmsTemplate jmsTemplate;
 
     @Autowired
@@ -49,7 +52,7 @@ public class Mq4TransferNotify extends BaseService4TransferOrder {
 
     public void send(String msg) {
         _log.info("发送MQ消息:msg={}", msg);
-        this.jmsTemplate.convertAndSend(new ActiveMQQueue(MqConfig.TRANS_NOTIFY_QUEUE_NAME), msg);
+        this.jmsTemplate.convertAndSend(this.transNotifyQueue, msg);
     }
 
     /**
@@ -59,7 +62,7 @@ public class Mq4TransferNotify extends BaseService4TransferOrder {
      */
     public void send(String msg, long delay) {
         _log.info("发送MQ延时消息:msg={},delay={}", msg, delay);
-        jmsTemplate.send(new ActiveMQQueue(MqConfig.TRANS_NOTIFY_QUEUE_NAME), new MessageCreator() {
+        jmsTemplate.send(this.transNotifyQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 TextMessage tm = session.createTextMessage(msg);
                 tm.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_DELAY, delay);
@@ -117,7 +120,7 @@ public class Mq4TransferNotify extends BaseService4TransferOrder {
             // 发送商户通知
             baseNotify4MchTrans.doNotify(transOrder, true);
         }else {
-            // 更新转账状态为成功
+            // 更新转账状态为失败
             String channelErrCode = bizResult.get("channelErrCode") == null ? "" : bizResult.get("channelErrCode").toString();
             String channelErrMsg = bizResult.get("channelErrMsg") == null ? "" : bizResult.get("channelErrMsg").toString();
             result = baseUpdateStatus4Fail(transOrderId, channelErrCode, channelErrMsg);

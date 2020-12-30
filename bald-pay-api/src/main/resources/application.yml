@@ -2,12 +2,11 @@ server:
   port: 9060
 
 spring:
-
   datasource:
     #    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
+    url: jdbc:mysql://172.16.10.244:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
     username: root
-    password: 123456
+    password: Zhskg@2020Mysql
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialSize: 5    # 初始化大小
     minIdle: 5        # 最小
@@ -23,36 +22,35 @@ spring:
     maxPoolPreparedStatementPerConnectionSize: 20   # 指定每个连接上PSCache的大小
     filters: stat,wall,log4j                        # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000  # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
-  profiles:
-    active: prod
-    include:
-      - activeMQ
-      #- rabbitMQ # 需要安装延迟队列插件：https://www.rabbitmq.com/blog/2015/04/16/scheduling-messages-with-rabbitmq/
+#  profiles:
+#    active: prod
+#    include:
+#      - activeMQ
+#      #- rabbitMQ # 需要安装延迟队列插件：https://www.rabbitmq.com/blog/2015/04/16/scheduling-messages-with-rabbitmq/
 
   activemq:
-    broker-url: failover:(tcp://10.0.0.13:61617?wireFormat.maxInactivityDuration=0)
+    broker-url: failover:(tcp://172.16.10.253:61616?wireFormat.maxInactivityDuration=0)
     in-memory: true
     pool:
       enabled: true # 如果此处设置为true，需要加activemq-pool依赖包，否则会自动配置失败，报JmsMessagingTemplate注入失败
-
-  rabbitmq:
-    addresses: 127.0.0.1:5672
-    username: guest
-    password: guest
-    dynamic: true
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
   type-aliases-package: wiki.heh.bald.pay.api.entity
 
 config:
   ali:
-    notify_url: http://jiutongtang.cn:19060/notify/pay/aliPayNotifyRes.htm
-    return_url: http://jiutongtang.cn:19060
+    notify_url: http://zhskg.net/bald-pay/notify/pay/aliPayNotifyRes.htm
+    return_url: http://zhskg.net
   wx:
-    certRootPath: /home/xxpay/service/cert
-    notifyUrl: http://api.xxpay.org/notify/pay/wxPayNotifyRes.htm
+    certRootPath: /home/bald-pay/cert
+    notifyUrl: http://zhskg.net/bald-pay/notify/pay/wxPayNotifyRes.htm
 
 logging:
-  file: ./log/xxpay4spring-boot.log
+  level:
+    wiki.heh.bald.pay.api: info
+    wiki.heh.bald.pay.common: info
+  file:
+    max-size: 1GB
+    name: /log/baldPay.log
 site:
   version: v1.0.0

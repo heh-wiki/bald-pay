@@ -21,7 +21,7 @@ import javax.jms.Queue;
  */
 @Component
 public class Mq4MchTransNotify extends Mq4MchNotify {
-
+    private static final Integer NOTIFY_MAX = 12;
     @Autowired
     private Queue mchTransNotifyQueue;
 
@@ -47,8 +47,9 @@ public class Mq4MchTransNotify extends Mq4MchNotify {
             return;
         }
         String httpResult = httpPost(respUrl);
-        int cnt = count + 1;
-        _log.info("{}notifyCount={}", logPrefix, cnt);
+        count++;
+        long time = ((count<<count)>>1) * 60 * 1000;
+        _log.info("{}notifyCount={}", logPrefix, count);
         if("success".equalsIgnoreCase(httpResult)){
             // 修改支付订单表
             try {
@@ -59,8 +60,8 @@ public class Mq4MchTransNotify extends Mq4MchNotify {
             }
             // 修改通知
             try {
-                int result = super.baseUpdateMchNotifySuccess(orderId, httpResult, (byte) cnt);
-                _log.info("{}修改商户通知,orderId={},result={},notifyCount={},结果:{}", logPrefix, orderId, httpResult, cnt, result == 1 ? "成功" : "失败");
+                int result = super.baseUpdateMchNotifySuccess(orderId, httpResult, (byte) count);
+                _log.info("{}修改商户通知,orderId={},result={},notifyCount={},结果:{}", logPrefix, orderId, httpResult, count, result == 1 ? "成功" : "失败");
             }catch (Exception e) {
                 _log.error( "修改商户支付通知异常");
             }
@@ -68,19 +69,20 @@ public class Mq4MchTransNotify extends Mq4MchNotify {
         }else {
             // 修改通知次数
             try {
-                int result = super.baseUpdateMchNotifyFail(orderId, httpResult, (byte) cnt);
-                _log.info("{}修改商户通知,orderId={},result={},notifyCount={},结果:{}", logPrefix, orderId, httpResult, cnt, result == 1 ? "成功" : "失败");
+                int result = super.baseUpdateMchNotifyFail(orderId, httpResult, (byte) count);
+                _log.info("{}修改商户通知,orderId={},result={},notifyCount={},结果:{}", logPrefix, orderId, httpResult, count, result == 1 ? "成功" : "失败");
             }catch (Exception e) {
                 _log.error( "修改商户支付通知异常");
             }
-            if (cnt > 5) {
-                _log.info("{}通知次数notifyCount()>5,停止通知", respUrl, cnt);
+            if (count > NOTIFY_MAX) {
+                _log.info("{}通知次数notifyCount({})>{},停止通知", respUrl, count,NOTIFY_MAX);
                 return ;
             }
             // 通知失败，延时再通知
-            msgObj.put("count", cnt);
-            this.send(mchTransNotifyQueue, msgObj.toJSONString(), cnt * 60 * 1000);
-            _log.info("{}发送延时通知完成,通知次数:{},{}秒后执行通知", respUrl, cnt, cnt * 60);
+            msgObj.put("count", count);
+            this.send(mchTransNotifyQueue, msgObj.toJSONString(), time);
+            _log.info("{}发送延时通知完成,通知次数:{},{}后执行通知", respUrl, count, time/1000/60<60?time+"分钟":(time/1000/60/60<24? time/1000/60/60+"小时:"+time/1000/60%60+"分钟":(time/1000/60/60)/24+"天"));
+
         }
     }
 }

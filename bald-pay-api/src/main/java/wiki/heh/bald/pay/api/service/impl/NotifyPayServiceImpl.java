@@ -17,8 +17,8 @@ import wiki.heh.bald.pay.api.config.channel.alipay.AlipayConfig;
 import wiki.heh.bald.pay.api.config.channel.wechat.WxPayUtil;
 import wiki.heh.bald.pay.api.entity.po.PayChannel;
 import wiki.heh.bald.pay.api.entity.po.PayOrder;
+import wiki.heh.bald.pay.api.service.BaseNotify4MchPay;
 import wiki.heh.bald.pay.api.service.INotifyPayService;
-import wiki.heh.bald.pay.api.service.Notify4BasePay;
 import wiki.heh.bald.pay.common.constant.PayConstant;
 import wiki.heh.bald.pay.common.domain.BaseParam;
 import wiki.heh.bald.pay.common.enumm.RetEnum;
@@ -37,7 +37,7 @@ import java.util.Map;
  * @date 2020-12-18
  */
 @Service
-public class NotifyPayServiceImpl extends Notify4BasePay implements INotifyPayService {
+public class NotifyPayServiceImpl extends BaseNotify4MchPay implements INotifyPayService {
 
     private static final Logger _log = LoggerFactory.getLogger(NotifyPayServiceImpl.class);
 
@@ -91,7 +91,7 @@ public class NotifyPayServiceImpl extends Notify4BasePay implements INotifyPaySe
             _log.info("{}响应给支付宝结果：{}", logPrefix, PayConstant.RETURN_ALIPAY_VALUE_SUCCESS);
             return RpcUtil.createBizResult(baseParam, PayConstant.RETURN_ALIPAY_VALUE_SUCCESS);
         }
-        doNotify(payOrder);
+        doNotify(payOrder,true);
         _log.info("====== 完成处理支付宝支付回调通知 ======");
         return RpcUtil.createBizResult(baseParam, PayConstant.RETURN_ALIPAY_VALUE_SUCCESS);
     }
@@ -140,7 +140,7 @@ public class NotifyPayServiceImpl extends Notify4BasePay implements INotifyPaySe
                 payOrder.setChannelOrderNo(result.getTransactionId());
             }
             // 业务系统后端通知
-            doNotify(payOrder);
+            doNotify(payOrder,true);
             _log.info("====== 完成处理微信支付回调通知 ======");
             return RpcUtil.createBizResult(baseParam, WxPayNotifyResponse.success("OK"));
         } catch (WxPayException e) {
@@ -173,7 +173,7 @@ public class NotifyPayServiceImpl extends Notify4BasePay implements INotifyPaySe
         if(payOrder == null) return RpcUtil.createFailResult(baseParam, RetEnum.RET_BIZ_DATA_NOT_EXISTS);
         try {
             // 发送业务支付通知
-            super.doNotify(payOrder);
+            super.doNotify(payOrder,true);
         }catch (Exception e) {
             return RpcUtil.createBizResult(baseParam, 0);
         }

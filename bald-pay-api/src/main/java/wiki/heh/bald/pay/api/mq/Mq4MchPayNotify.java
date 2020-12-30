@@ -9,9 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import wiki.heh.bald.pay.api.service.BaseService4RefundOrder;
+import org.springframework.web.client.RestTemplate;
+import wiki.heh.bald.pay.api.service.BaseService;
+import wiki.heh.bald.pay.api.service.BaseService4PayOrder;
 
 import javax.jms.Queue;
+import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static wiki.heh.bald.pay.api.mq.MqConfig.MCH_PAY_NOTIFY_QUEUE_NAME;
 
 /**
  * 商户通知MQ统一处理
@@ -21,23 +28,23 @@ import javax.jms.Queue;
  * @date 2020-12-18
  */
 @Component
-public class Mq4MchRefundNotify extends Mq4MchNotify {
+public class Mq4MchPayNotify extends Mq4MchNotify {
+
+    @Autowired
+    private Queue mchPayNotifyQueue;
     private static final Integer NOTIFY_MAX = 12;
     @Autowired
-    private Queue mchRefundNotifyQueue;
+    private BaseService4PayOrder baseService4PayOrder;
 
-    @Autowired
-    private BaseService4RefundOrder baseService4RefundOrder;
-
-    private static final Logger _log = LoggerFactory.getLogger(Mq4MchRefundNotify.class);
+    private static final Logger _log = LoggerFactory.getLogger(Mq4MchPayNotify.class);
 
     public void send(String msg) {
-        super.send(new ActiveMQQueue(MqConfig.MCH_REFUND_NOTIFY_QUEUE_NAME), msg);
+        super.send(new ActiveMQQueue(MCH_PAY_NOTIFY_QUEUE_NAME), msg);
     }
 
-    @JmsListener(destination = MqConfig.MCH_REFUND_NOTIFY_QUEUE_NAME)
+    @JmsListener(destination = MCH_PAY_NOTIFY_QUEUE_NAME)
     public void receive(String msg) {
-        String logPrefix = "【商户退款通知】";
+        String logPrefix = "【商户支付通知】";
         _log.info("{}接收消息:msg={}", logPrefix, msg);
         JSONObject msgObj = JSON.parseObject(msg);
         String respUrl = msgObj.getString("url");
@@ -54,10 +61,11 @@ public class Mq4MchRefundNotify extends Mq4MchNotify {
         if ("success".equalsIgnoreCase(httpResult)) {
             // 修改支付订单表
             try {
-                int result = baseService4RefundOrder.baseUpdateStatus4Complete(orderId);
+                int result = baseService4PayOrder.baseUpdateStatus4Complete(orderId);
                 _log.info("{}修改payOrderId={},订单状态为处理完成->{}", logPrefix, orderId, result == 1 ? "成功" : "失败");
             } catch (Exception e) {
                 _log.error("修改订单状态为处理完成异常");
+                e.printStackTrace();
             }
             // 修改通知
             try {
@@ -65,6 +73,7 @@ public class Mq4MchRefundNotify extends Mq4MchNotify {
                 _log.info("{}修改商户通知,orderId={},result={},notifyCount={},结果:{}", logPrefix, orderId, httpResult, count, result == 1 ? "成功" : "失败");
             } catch (Exception e) {
                 _log.error("修改商户支付通知异常");
+                e.printStackTrace();
             }
             return; // 通知成功结束
         } else {
@@ -74,26 +83,16 @@ public class Mq4MchRefundNotify extends Mq4MchNotify {
                 _log.info("{}修改商户通知,orderId={},result={},notifyCount={},结果:{}", logPrefix, orderId, httpResult, count, result == 1 ? "成功" : "失败");
             } catch (Exception e) {
                 _log.error("修改商户支付通知异常");
+                e.printStackTrace();
             }
             if (count > NOTIFY_MAX) {
-                _log.info("{}通知次数notifyCount({})>{},停止通知", respUrl, count, NOTIFY_MAX);
+                _log.info("{}通知次数notifyCount()>5,停止通知", respUrl, count);
                 return;
             }
             // 通知失败，延时再通知
             msgObj.put("count", count);
-            this.send(mchRefundNotifyQueue, msgObj.toJSONString(), time);
+            this.send(mchPayNotifyQueue, msgObj.toJSONString(), time);
             _log.info("{}发送延时通知完成,通知次数:{},{}后执行通知", respUrl, count, time/1000/60<60?time+"分钟":(time/1000/60/60<24? time/1000/60/60+"小时:"+time/1000/60%60+"分钟":(time/1000/60/60)/24+"天"));
         }
-    }
-
-    public static void main(String[] args) {
-        int con = 0;
-        System.out.println("支付中心回调时刻表");
-        for (int i = 1; i < 20; i++) {
-            int c = (i<<i)>>1;
-            System.out.println("第"+i+"次回调时间间隔->".concat(c<60?c+"分钟":(c/60<24? c/60+"小时:"+c%60+"分钟":(c/60)/24+"天")));
-            con+=c;
-        }
-        System.out.println("超过"+con/60/24+"天后不再有回调");
     }
 }

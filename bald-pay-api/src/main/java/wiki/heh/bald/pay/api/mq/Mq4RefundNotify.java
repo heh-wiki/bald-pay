@@ -7,6 +7,7 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -23,8 +24,6 @@ import wiki.heh.bald.pay.common.util.StrUtil;
 import javax.jms.*;
 import java.util.HashMap;
 import java.util.Map;
-
-import static wiki.heh.bald.pay.api.mq.MqConfig.PAY_NOTIFY_QUEUE_NAME;
 
 /**
  * 业务通知MQ实现
@@ -55,7 +54,7 @@ public class Mq4RefundNotify extends BaseService4RefundOrder {
 
     public void send(String msg) {
         _log.info("发送MQ消息:msg={}", msg);
-        this.jmsTemplate.convertAndSend(new ActiveMQQueue(MqConfig.REFUND_NOTIFY_QUEUE_NAME), msg);
+        this.jmsTemplate.convertAndSend(this.refundNotifyQueue, msg);
     }
 
     /**

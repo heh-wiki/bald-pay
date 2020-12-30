@@ -92,7 +92,7 @@ public class PayOrderServiceImpl extends BaseService implements IPayOrderService
         Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
         map.putAll((Map) result.get("bizResult"));
         //todo 需要修改参照支付宝
-        return Result.fail();
+        return Result.success(result.get("bizResult"));
 //        return BaldPayUtil.makeRetData(map, resKey);
     }
 

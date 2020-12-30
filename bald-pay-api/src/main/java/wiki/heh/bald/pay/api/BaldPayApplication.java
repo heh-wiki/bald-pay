@@ -5,7 +5,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -15,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @SpringBootApplication
 @MapperScan("wiki.heh.bald.pay.api.mapper")
-public class BaldPayApiApplication {
+public class BaldPayApplication {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
@@ -24,7 +23,7 @@ public class BaldPayApiApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(BaldPayApiApplication.class, args);
+        SpringApplication.run(BaldPayApplication.class, args);
     }
 
 }
