@@ -1,5 +1,6 @@
 package wiki.heh.bald.pay.api.entity.form;
 
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -28,7 +29,7 @@ public class UnifiedPayForm {
     @ApiModelProperty(value = "商品描述信息",required = true, example = "伴置车测试商品的描述信息")
     private String body;
     @ApiModelProperty(value = "特定渠道发起时额外参数", example = "{\"openId\":\"123\"}")
-    private String extra;
+    private JSONObject extra;
     @ApiModelProperty(value = "扩展参数1", example = "")
     private String param1;
     @ApiModelProperty(value = "扩展参数2", example = "")
@@ -108,11 +109,11 @@ public class UnifiedPayForm {
         this.body = body;
     }
 
-    public String getExtra() {
+    public JSONObject getExtra() {
         return extra;
     }
 
-    public void setExtra(String extra) {
+    public void setExtra(JSONObject extra) {
         this.extra = extra;
     }
 

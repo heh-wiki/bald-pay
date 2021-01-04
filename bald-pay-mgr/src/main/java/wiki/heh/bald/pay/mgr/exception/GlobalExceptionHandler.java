@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
      * 处理 ServiceException 异常
      */
     @ResponseBody
-    @ExceptionHandler(value = ServiceException.class)
-    public Result serviceExceptionHandler(ServiceException ex) {
+    @ExceptionHandler(value = MgrException.class)
+    public Result serviceExceptionHandler(MgrException ex) {
         log.debug("[serviceExceptionHandler]", ex);
         // 包装 CommonResult 结果
         return Result.fail(ex.getCode(), ex.getMessage());
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     public Result serverWebInputExceptionHandler(ServerWebInputException ex) {
         log.debug("[ServerWebInputExceptionHandler]", ex);
         // 包装 CommonResult 结果
-        return Result.fail(BaldPayErrorType.MISSING_REQUEST_PARAM_ERROR);
+        return Result.fail(MgrErrorType.MISSING_REQUEST_PARAM_ERROR);
     }
 
     /**
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
         // 记录异常日志
         log.error("[exceptionHandler]", e);
         // 返回 ERROR CommonResult
-        return Result.fail(BaldPayErrorType.SYSTEM_ERROR);
+        return Result.fail(MgrErrorType.SYSTEM_ERROR);
     }
 
 }

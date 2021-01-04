@@ -115,10 +115,10 @@ public class Mq4MchNotify extends BaseService4PayOrder {
                 }
                 in.close();
             }else {
-                _log.error("not do protocol. protocol=%s", console.getProtocol());
+                _log.error("not do protocol. protocol={}", console.getProtocol());
             }
         } catch(Exception e) {
-            _log.error("httpPost exception. url:%s", url);
+            _log.error("httpPost exception. url:{}", url);
         }
         return sb.toString();
     }

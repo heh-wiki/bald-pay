@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import wiki.heh.bald.pay.mgr.exception.BaldPayErrorType;
+import wiki.heh.bald.pay.mgr.exception.MgrErrorType;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -39,7 +39,7 @@ public class Result<T> {
     /**
      * @param errorType
      */
-    public Result(BaldPayErrorType errorType) {
+    public Result(MgrErrorType errorType) {
         this.code = errorType.getCode();
         this.msg = errorType.getMsg();
         this.time = ZonedDateTime.now().toInstant();
@@ -49,7 +49,7 @@ public class Result<T> {
      * @param errorType
      * @param data
      */
-    public Result(BaldPayErrorType errorType, T data) {
+    public Result(MgrErrorType errorType, T data) {
         this(errorType);
         this.data = data;
     }
@@ -93,10 +93,10 @@ public class Result<T> {
      * @return Result
      */
     public static Result fail() {
-        return new Result(BaldPayErrorType.SYSTEM_ERROR);
+        return new Result(MgrErrorType.SYSTEM_ERROR);
     }
 
-    public static Result fail(BaldPayErrorType errorType) {
+    public static Result fail(MgrErrorType errorType) {
         return new Result(errorType.getCode(), errorType.getMsg(), null);
     }
 
