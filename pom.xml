@@ -13,7 +13,6 @@
         <module>bald-pay-common</module>
         <module>bald-pay-eureka</module>
         <module>bald-pay-config</module>
-        <module>bald-pay-service</module>
         <module>bald-pay-mgr</module>
         <module>bald-pay-api</module>
     </modules>
@@ -43,11 +42,11 @@
 <!--            <groupId>org.springframework.cloud</groupId>-->
 <!--            <artifactId>spring-cloud-starter-config</artifactId>-->
 <!--        </dependency>-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-test</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
