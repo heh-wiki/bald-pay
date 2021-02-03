@@ -56,6 +56,8 @@ public enum PayServiceErrorType {
     RET_BIZ_PAY_NOTIFY_VERIFY_FAIL  ("881005", "支付通知数据验证不正确"),
     FAILED_TO_CREATE_PAYMENT_ORDER  ("881006", "创建支付订单失败"),
 
+    THIRD_PARTY_EXCEPTION           ("881400", "第三方异常"),
+
 
     // 未知错误
     RET_UNKNOWN_ERROR               ("9999", "未知错误");

@@ -42,10 +42,30 @@ public interface IPayChannel4AliService {
      */
     Result doAliPayQrReq(String jsonParam, String resKey);
 
+    /**
+     * 当面付(二维码支付)
+     *
+     * @param jsonParam
+     * @return
+     */
+    Result doAliPayJsApiReq(String jsonParam, String resKey);
+
+    /**
+     * 转账
+     *
+     * @param jsonParam
+     * @return
+     */
     Map doAliTransReq(String jsonParam);
 
     Map getAliTransReq(String jsonParam);
 
+    /**
+     * 交易退款
+     *
+     * @param jsonParam
+     * @return
+     */
     Map doAliRefundReq(String jsonParam);
 
     Map getAliRefundReq(String jsonParam);

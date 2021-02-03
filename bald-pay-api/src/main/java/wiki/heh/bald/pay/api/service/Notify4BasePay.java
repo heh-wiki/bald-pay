@@ -86,7 +86,7 @@
 //		/*try {
 //			response.sendRedirect(redirectUrl);
 //		} catch (IOException e) {
-//			_log.error("XxPay sendRedirect exception. respUrl="+redirectUrl, e);
+//			_log.error("BaldPay sendRedirect exception. respUrl="+redirectUrl, e);
 //			return false;
 //		}*/
 //		return true;

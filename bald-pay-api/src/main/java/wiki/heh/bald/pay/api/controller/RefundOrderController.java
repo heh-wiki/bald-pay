@@ -188,7 +188,7 @@ public class RefundOrderController {
         // 验证签名数据
 //        boolean verifyFlag = BaldPayUtil.verifyPaySign(params, reqKey);
 //        if (!verifyFlag) {
-//            errorMessage = "Verify XX refund sign failed.";
+//            errorMessage = "Verify bald refund sign failed.";
 //            return errorMessage;
 //        }
 

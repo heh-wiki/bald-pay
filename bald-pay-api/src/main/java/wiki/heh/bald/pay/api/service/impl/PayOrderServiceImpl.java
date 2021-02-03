@@ -114,6 +114,9 @@ public class PayOrderServiceImpl extends BaseService implements IPayOrderService
             case PayConstant.PAY_CHANNEL_ALIPAY_QR :
                 result = payChannel4AliService.doAliPayQrReq(jsonParam,resKey);
                 break;
+            case PayConstant.PAY_CHANNEL_ALIPAY_JSAPI :
+                result = payChannel4AliService.doAliPayJsApiReq(jsonParam,resKey);
+                break;
             default:
                 result = null;
                 break;

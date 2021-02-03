@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     #    type: com.alibaba.druid.pool.DruidDataSource
-#    url: jdbc:mysql://10.0.0.254:3306/bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
+#    url: jdbc:mysql://10.0.0.254:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
 #    username: root
 #    password: Qwe@as123
     url: jdbc:mysql://172.16.10.244:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
@@ -44,12 +44,13 @@ mybatis:
 config:
   ali:
     notify_url: http://zhskg.net/bald-pay/notify/pay/aliPayNotifyRes.htm
+#    notifyUrl: http://jiutongtang.cn:19060/notify/pay/aliPayNotifyRes.htm
     return_url: http://zhskg.net
   wx:
-#    certRootPath: /home/kugs/IdeaProjects/pay/bald-pay/cert
-#    notifyUrl: http://jiutongtang.cn:19060/notify/pay/wxPayNotifyRes.htm
-    certRootPath: /home/bald-pay/cert
-    notifyUrl: http://zhskg.net/bald-pay/notify/pay/wxPayNotifyRes.htm
+    certRootPath: /home/kugs/IdeaProjects/pay/bald-pay/cert
+    notifyUrl: http://jiutongtang.cn:19060/notify/pay/wxPayNotifyRes.htm
+#    certRootPath: /home/bald-pay/cert
+#    notifyUrl: http://zhskg.net/bald-pay/notify/pay/wxPayNotifyRes.htm
 
 logging:
   level:

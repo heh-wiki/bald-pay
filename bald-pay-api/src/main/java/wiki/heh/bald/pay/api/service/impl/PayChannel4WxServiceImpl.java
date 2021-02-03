@@ -1,6 +1,5 @@
 package wiki.heh.bald.pay.api.service.impl;
 
-import cn.hutool.crypto.digest.MD5;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.binarywang.wxpay.bean.request.WxEntPayRequest;
@@ -113,37 +112,6 @@ public class PayChannel4WxServiceImpl extends BaseService implements IPayChannel
                         map.put("payParams", payInfo);
                         break;
                     }
-//                    case PayConstant.WxConstant.TRADE_TYPE_APP: {
-//                        Map<String, String> payInfo = new HashMap<>();
-//                        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
-//                        String nonceStr = RandomStringUtils.randomAlphanumeric(25);
-//                        // APP支付绑定的是微信开放平台上的账号，APPID为开放平台上绑定APP后发放的参数
-//                        String appId = wxPayConfig.getAppId();
-//                        SortedMap<String, Object> configMap = new TreeMap<>();;
-//                        // 此map用于参与调起sdk支付的二次签名,格式全小写，timestamp只能是10位,格式固定，切勿修改
-//                        String partnerId = wxPayConfig.getMchId();
-//                        configMap.put("prepayid", wxPayUnifiedOrderResult.getPrepayId());
-//                        configMap.put("partnerid", partnerId);
-//                        String packageValue = "Sign=WXPay";
-//                        configMap.put("package", packageValue);
-//                        configMap.put("timestamp", timestamp);
-//                        configMap.put("noncestr", nonceStr);
-//                        configMap.put("appid", appId);
-//                        // 此map用于客户端与微信服务器交互
-//                        System.out.println("----"+configMap);
-//                        String sign = signApp(configMap, wxPayConfig.getMchKey());
-////                        payInfo.put("sign", SignUtils.createSign(configMap, wxPayConfig.getMchKey(), null));
-//                        payInfo.put("sign", sign);
-//                        System.out.println("----"+payInfo);
-//                        payInfo.put("prepayId", wxPayUnifiedOrderResult.getPrepayId());
-//                        payInfo.put("partnerId", partnerId);
-//                        payInfo.put("appId", appId);
-//                        payInfo.put("packageValue", packageValue);
-//                        payInfo.put("timeStamp", timestamp);
-//                        payInfo.put("nonceStr", nonceStr);
-//                        map.put("payParams", payInfo);
-//                        break;
-//                    }
                     case PayConstant.WxConstant.TRADE_TYPE_JSPAI: {
                         Map<String, String> payInfo = new HashMap<>();
                         String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
@@ -181,26 +149,6 @@ public class PayChannel4WxServiceImpl extends BaseService implements IPayChannel
 
             //return BaldPayUtil.makeRetFail(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
         }
-    }
-
-    public static String signApp(Map<String, Object> parameters, String apiKey) {
-        StringBuffer sb = new StringBuffer();
-        Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Object> entry = (Map.Entry<String, Object>) it.next();
-            String key = (String) entry.getKey();
-            // 去掉带sign的项
-            Object value = entry.getValue();
-            if (null != value && !"".equals(value) && !"sign".equals(key)
-                    && !"key".equals(key)) {
-                sb.append(key + "=" + value + "&");
-            }
-        }
-        sb.append("key=" + apiKey);
-        System.err.println("签名组装:" + sb.toString());
-        // 注意sign转为大写
-        MD5 md5 = new MD5();
-        return md5.digestHex(sb.toString()).toUpperCase();
     }
 
     @Override

@@ -111,5 +111,18 @@ public class AlipayConfig {
     public void setAlipay_public_key(String alipay_public_key) {
         this.alipay_public_key = alipay_public_key;
     }
+
+    @Override
+    public String toString() {
+        return "AlipayConfig{" +
+                "app_id='" + app_id + '\'' +
+                ", rsa_private_key='" + rsa_private_key + '\'' +
+                ", notify_url='" + notify_url + '\'' +
+                ", return_url='" + return_url + '\'' +
+                ", url='" + url + '\'' +
+                ", alipay_public_key='" + alipay_public_key + '\'' +
+                ", isSandbox=" + isSandbox +
+                '}';
+    }
 }
 

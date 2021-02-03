@@ -136,7 +136,7 @@ public class QueryPayOrderController {
         // 验证签名数据
         boolean verifyFlag = BaldPayUtil.verifyPaySign(params, reqKey);
 //        if (!verifyFlag) {
-//            errorMessage = "Verify XX pay sign failed.";
+//            errorMessage = "Verify bald pay sign failed.";
 //            return errorMessage;
 //        }
 

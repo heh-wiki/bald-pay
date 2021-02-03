@@ -182,7 +182,7 @@ public class TransOrderController {
         // 验证签名数据
 //        boolean verifyFlag = BaldPayUtil.verifyPaySign(params, reqKey);
 //        if (!verifyFlag) {
-//            errorMessage = "Verify XX trans sign failed.";
+//            errorMessage = "Verify bald trans sign failed.";
 //            return errorMessage;
 //        }
         // 验证参数通过,返回JSONObject对象

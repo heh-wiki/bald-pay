@@ -81,11 +81,11 @@
 //        Map<String, Object> result = rpcCommonService.rpcPayChannel4WxService.doWxPayReq(jsonParam);
 //        String s = RpcUtil.mkRet(result);
 //        if(s == null) {
-//            return XXPayUtil.makeRetData(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_FAIL, "0111", "调用微信支付失败"), resKey);
+//            return BaldPayUtil.makeRetData(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_FAIL, "0111", "调用微信支付失败"), resKey);
 //        }
-//        Map<String, Object> map = XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
+//        Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
 //        map.putAll((Map) result.get("bizResult"));
-//        return XXPayUtil.makeRetData(map, resKey);
+//        return BaldPayUtil.makeRetData(map, resKey);
 //    }
 //
 //
