@@ -5,9 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.Map;
 
 /**
- * @author: dingzhiwei
- * @date: 17/9/8
- * @description:
+ * @author heh
+ * @date 17/9/8
+ * @description
  */
 public interface IMchInfoService {
 

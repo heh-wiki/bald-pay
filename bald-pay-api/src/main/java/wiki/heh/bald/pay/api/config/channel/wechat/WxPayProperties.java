@@ -4,9 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * User: rizenguo
- * Date: 2014/10/29
- * Time: 14:40
  * 这里放置各种配置数据
  */
 @Component

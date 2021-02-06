@@ -7,9 +7,9 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import java.io.File;
 
 /**
- * @author: dingzhiwei
- * @date: 17/8/25
- * @description:
+ * @author heh
+ * @version v1.0
+ * @date 2020-12-18
  */
 public class WxPayUtil {
 

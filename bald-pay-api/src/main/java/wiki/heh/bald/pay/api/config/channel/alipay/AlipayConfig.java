@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
- * @author: dingzhiwei
- * @date: 17/8/21
- * @description:
+ *
+ * @author heh
+ * @version v1.0
+ * @date 2020-12-20
  */
 @Component
 @ConfigurationProperties(prefix="config.ali")

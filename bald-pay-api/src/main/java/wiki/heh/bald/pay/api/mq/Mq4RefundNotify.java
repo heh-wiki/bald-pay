@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * 业务通知MQ实现
  *
- * @author hehua
+ * @author heh
  * @version v1.0
  * @date 2020/12/18
  */

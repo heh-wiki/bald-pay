@@ -1,9 +1,9 @@
 package wiki.heh.bald.pay.common.util;
 
 /**
- * @author: dingzhiwei
- * @date: 2020/11/1
- *
+ * @author heh
+ * @version v1.0
+ * @date 2020-11-30
  */
 public class StrUtil {
 

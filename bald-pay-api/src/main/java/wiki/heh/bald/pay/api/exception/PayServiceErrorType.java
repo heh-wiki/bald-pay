@@ -2,7 +2,7 @@ package wiki.heh.bald.pay.api.exception;
 
 
 /**
- * @author kugs
+ * @author heh
  */
 
 public enum PayServiceErrorType {

@@ -22,7 +22,8 @@ import java.util.List;
 
 /**
  * 支付渠道
- * @author kugs
+ *
+ * @author heh
  */
 @Controller
 @RequestMapping("pay_channel")
@@ -41,10 +42,10 @@ public class PayChannelController {
     @GetMapping("edit.html")
     public String editInput(String id, ModelMap model) {
         PayChannel item = null;
-        if(StringUtils.isNotBlank(id) && NumberUtils.isNumber(id)) {
+        if (StringUtils.isNotBlank(id) && NumberUtils.isNumber(id)) {
             item = payChannelService.selectPayChannel(Integer.parseInt(id));
         }
-        if(item == null) item = new PayChannel();
+        if (item == null) item = new PayChannel();
         model.put("item", item);
         return "pay_channel/edit";
     }
@@ -54,11 +55,11 @@ public class PayChannelController {
     public String list(@ModelAttribute PayChannel payChannel, Integer pageIndex, Integer pageSize) {
         PageModel pageModel = new PageModel();
         int count = payChannelService.count(payChannel);
-        if(count <= 0) return JSON.toJSONString(pageModel);
-        List<PayChannel> payChannelList = payChannelService.getPayChannelList((pageIndex-1)*pageSize, pageSize, payChannel);
-        if(!CollectionUtils.isEmpty(payChannelList)) {
+        if (count <= 0) return JSON.toJSONString(pageModel);
+        List<PayChannel> payChannelList = payChannelService.getPayChannelList((pageIndex - 1) * pageSize, pageSize, payChannel);
+        if (!CollectionUtils.isEmpty(payChannelList)) {
             JSONArray array = new JSONArray();
-            for(PayChannel pc : payChannelList) {
+            for (PayChannel pc : payChannelList) {
                 JSONObject object = (JSONObject) JSONObject.toJSON(pc);
                 object.put("createTime", DateUtil.date2Str(pc.getCreateTime()));
                 array.add(object);
@@ -78,17 +79,17 @@ public class PayChannelController {
         String channelId = po.getString("channelId");
         String param = po.getString("param");
         // 对于配置支付宝参数时,前端将+号转为空格bug处理
-        if(PayConstant.PAY_CHANNEL_ALIPAY_MOBILE.equals(channelId) ||
+        if (PayConstant.PAY_CHANNEL_ALIPAY_MOBILE.equals(channelId) ||
                 PayConstant.PAY_CHANNEL_ALIPAY_PC.equals(channelId) ||
                 PayConstant.PAY_CHANNEL_ALIPAY_WAP.equals(channelId) ||
                 PayConstant.PAY_CHANNEL_ALIPAY_QR.equals(channelId)) {
             JSONObject paramObj = null;
-            try{
+            try {
                 paramObj = JSON.parseObject(po.getString("param"));
-            }catch (Exception e) {
+            } catch (Exception e) {
                 _log.info("param is not json");
             }
-            if(paramObj != null) {
+            if (paramObj != null) {
                 paramObj.put("private_key", paramObj.getString("private_key").replaceAll(" ", "+"));
                 paramObj.put("alipay_public_key", paramObj.getString("alipay_public_key").replaceAll(" ", "+"));
                 param = paramObj.toJSONString();
@@ -104,25 +105,25 @@ public class PayChannelController {
         payChannel.setParam(param);
         payChannel.setRemark(po.getString("remark"));
         int result;
-        if(id == null) {
+        if (id == null) {
             // 添加
             result = payChannelService.addPayChannel(payChannel);
-        }else {
+        } else {
             // 修改
             payChannel.setId(id);
             result = payChannelService.updatePayChannel(payChannel);
         }
         _log.info("保存渠道记录,返回:{}", result);
-        return result+"";
+        return result + "";
     }
 
     @GetMapping("view.html")
     public String viewInput(String id, ModelMap model) {
         PayChannel item = null;
-        if(StringUtils.isNotBlank(id) && NumberUtils.isNumber(id)) {
+        if (StringUtils.isNotBlank(id) && NumberUtils.isNumber(id)) {
             item = payChannelService.selectPayChannel(Integer.parseInt(id));
         }
-        if(item == null) item = new PayChannel();
+        if (item == null) item = new PayChannel();
         model.put("item", item);
         return "pay_channel/view";
     }

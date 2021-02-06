@@ -3,10 +3,10 @@ package wiki.heh.bald.pay.mgr.util;
 import java.util.List;
 
 /**
- * @Description:
- * @author dingzhiwei jmdhappy@126.com
-  * @date 2020-07-05
+ * @author heh
  * @version V1.0
+ * @Description
+ * @date 2020-07-05
  */
 public class PageModel<T> {
 

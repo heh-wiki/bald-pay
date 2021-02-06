@@ -1,7 +1,7 @@
 package wiki.heh.bald.pay.api.entity.vo;
 
 /**
- * @author hehua
+ * @author heh
  * @date 2020/12/21
  */
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
  * 全局统一返回类
  *
  * @param <T>
- * @author hehua
+ * @author heh
  * @date 2020/11/4
  */
 @ApiModel(description = "rest请求的返回模型，所有rest正常都返回该类的对象")

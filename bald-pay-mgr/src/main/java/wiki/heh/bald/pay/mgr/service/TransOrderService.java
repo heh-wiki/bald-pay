@@ -10,7 +10,10 @@ import wiki.heh.bald.pay.mgr.model.TransOrderExample;
 import java.util.List;
 
 /**
- * Created by dingzhiwei on 17/11/03.
+ *
+ * @author heh
+ * @version v1.0
+ * @date 2020-12-18
  */
 @Component
 public class TransOrderService {

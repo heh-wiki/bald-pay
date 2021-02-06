@@ -2,7 +2,10 @@ package wiki.heh.bald.pay.mgr.exception;
 
 
 /**
- * @author kugs
+ *
+ * @author heh
+ * @version v1.0
+ * @date 2020-12-20
  */
 
 public enum MgrErrorType {

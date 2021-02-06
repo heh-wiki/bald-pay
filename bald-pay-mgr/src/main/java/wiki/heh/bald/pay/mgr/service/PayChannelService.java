@@ -11,7 +11,10 @@ import wiki.heh.bald.pay.mgr.model.PayChannelExample;
 import java.util.List;
 
 /**
- * Created by dingzhiwei on 17/5/7.
+ *
+ * @author heh
+ * @version v1.0
+ * @date 2020-12-18
  */
 @Component
 public class PayChannelService {

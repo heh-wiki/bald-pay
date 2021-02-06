@@ -31,7 +31,7 @@ import java.util.Map;
  * 3)根据商户选择渠道,调用支付服务进行下单
  * 4)返回下单数据
  *
- * @author hehua
+ * @author heh
  * @version v1.0
  * @date 2020/12/18
  */
