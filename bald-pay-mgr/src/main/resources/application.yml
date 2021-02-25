@@ -15,12 +15,12 @@ spring:
     templateLoaderPath: classpath:/templates/
 
   datasource:
-#    url: jdbc:mysql://10.0.0.254:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
-#    username: root
-#    password: Qwe@as123
-    url: jdbc:mysql://zhskg.net:60005/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
+    url: jdbc:mysql://10.0.0.254:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
     username: root
-    password: Zhskg@2020Mysql
+    password: Qwe@as123
+#    url: jdbc:mysql://zhskg.net:60005/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
+#    username: root
+#    password: Zhskg@2020Mysql
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis:

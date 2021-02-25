@@ -30,9 +30,9 @@ public class BeanConvertUtils {
      * @param obj
      * @return
      */
-    public static Map<String, Object> bean2Map(Object obj) {
+    public static Map<String, String> bean2Map(Object obj) {
         try {
-            Map<String, Object> map = BeanUtils.describe(obj);
+            Map<String, String> map = BeanUtils.describe(obj);
             map.remove("class");
             return map;
         } catch (IllegalAccessException e) {

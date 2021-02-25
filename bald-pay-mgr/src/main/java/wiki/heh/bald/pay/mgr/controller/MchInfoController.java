@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import wiki.heh.bald.pay.common.util.DateUtil;
 import wiki.heh.bald.pay.mgr.model.MchInfo;
 import wiki.heh.bald.pay.mgr.model.form.MchInfoParam;
+import wiki.heh.bald.pay.mgr.model.vo.Result;
 import wiki.heh.bald.pay.mgr.service.MchInfoService;
 import wiki.heh.bald.pay.mgr.util.PageModel;
 
@@ -92,7 +93,25 @@ public class MchInfoController {
         return result + "";
     }
 
-    @PostMapping("save")
+    @GetMapping("view.html")
+    public String viewInput(String mchId, ModelMap model) {
+        MchInfo item = null;
+        if (StringUtils.isNotBlank(mchId)) {
+            item = mchInfoService.selectMchInfo(mchId);
+        }
+        if (item == null) item = new MchInfo();
+        model.put("item", item);
+        return "mch_info/view";
+    }
+
+    @GetMapping("{id}/v1")
+    @ResponseBody
+    public String get(@PathVariable String id) {
+        MchInfo mchInfo = mchInfoService.selectMchInfo(id);
+        return JSON.toJSONString(Result.success(mchInfo));
+    }
+
+    @PostMapping("save/v1")
     @ResponseBody
     public String save(@RequestBody MchInfoParam params) {
         _log.info("请求保存商户记录");
@@ -110,14 +129,4 @@ public class MchInfoController {
         return result + "";
     }
 
-    @GetMapping("view.html")
-    public String viewInput(String mchId, ModelMap model) {
-        MchInfo item = null;
-        if (StringUtils.isNotBlank(mchId)) {
-            item = mchInfoService.selectMchInfo(mchId);
-        }
-        if (item == null) item = new MchInfo();
-        model.put("item", item);
-        return "mch_info/view";
-    }
 }
