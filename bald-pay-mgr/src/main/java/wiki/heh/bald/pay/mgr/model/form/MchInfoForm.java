@@ -6,7 +6,7 @@ package wiki.heh.bald.pay.mgr.model.form;
  * @author heh
  * @date 2021/2/5
  */
-public class MchInfoParam {
+public class MchInfoForm {
 
     /*商户ID*/
     private String mchId;

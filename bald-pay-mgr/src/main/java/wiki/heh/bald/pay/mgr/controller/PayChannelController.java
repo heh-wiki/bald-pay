@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -15,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import wiki.heh.bald.pay.common.constant.PayConstant;
 import wiki.heh.bald.pay.common.util.DateUtil;
 import wiki.heh.bald.pay.mgr.model.PayChannel;
+import wiki.heh.bald.pay.mgr.model.form.GetChannelForm;
+import wiki.heh.bald.pay.mgr.model.form.PayChannelForm;
+import wiki.heh.bald.pay.mgr.model.form.SearchPayChannel;
+import wiki.heh.bald.pay.mgr.model.vo.Result;
 import wiki.heh.bald.pay.mgr.service.PayChannelService;
 import wiki.heh.bald.pay.mgr.util.PageModel;
 
@@ -128,4 +133,79 @@ public class PayChannelController {
         return "pay_channel/view";
     }
 
+    @PostMapping("save/v1")
+    @ResponseBody
+    public String save(@RequestBody PayChannelForm form) {
+        JSONObject po = JSONObject.parseObject(JSON.toJSONString(form));
+        String channelId = po.getString("channelId");
+        String param = po.getString("param");
+        // 对于配置支付宝参数时,前端将+号转为空格bug处理
+        if (PayConstant.PAY_CHANNEL_ALIPAY_MOBILE.equals(channelId) ||
+                PayConstant.PAY_CHANNEL_ALIPAY_PC.equals(channelId) ||
+                PayConstant.PAY_CHANNEL_ALIPAY_WAP.equals(channelId) ||
+                PayConstant.PAY_CHANNEL_ALIPAY_QR.equals(channelId)) {
+            JSONObject paramObj = null;
+            try {
+                paramObj = JSON.parseObject(po.getString("param"));
+            } catch (Exception e) {
+                _log.info("param is not json");
+            }
+            if (paramObj != null) {
+                paramObj.put("private_key", paramObj.getString("private_key").replaceAll(" ", "+"));
+                paramObj.put("alipay_public_key", paramObj.getString("public_key").replaceAll(" ", "+"));
+                param = paramObj.toJSONString();
+            }
+        }
+        PayChannel payChannel = new PayChannel();
+        Integer id = po.getInteger("id");
+        payChannel.setChannelId(channelId);
+        payChannel.setMchId(po.getString("mchId"));
+        payChannel.setChannelName(po.getString("channelName"));
+        payChannel.setChannelMchId(po.getString("channelMchId"));
+        payChannel.setState((byte) ("on".equalsIgnoreCase(po.getString("state")) ? 1 : 0));
+        payChannel.setParam(param);
+        payChannel.setRemark(po.getString("remark"));
+        int result;
+        if (id == null) {
+            // 添加
+            result = payChannelService.addPayChannel(payChannel);
+        } else {
+            // 修改
+            payChannel.setId(id);
+            result = payChannelService.updatePayChannel(payChannel);
+        }
+        _log.info("保存渠道记录,返回:{}", result);
+        return result + "";
+    }
+
+    @PostMapping("get/v1")
+    @ResponseBody
+    public String get(@RequestBody GetChannelForm form) {
+        PayChannel payChannel = payChannelService.selectPayChannel(form.getChannelId(), form.getMchId());
+        return JSON.toJSONString(Result.success(payChannel));
+    }
+
+    @PostMapping("list/v1")
+    @ResponseBody
+    public String channelList(@RequestBody SearchPayChannel payChannel) {
+        PageModel pageModel = new PageModel();
+        PayChannel payChannel1 = new PayChannel();
+        BeanUtils.copyProperties(payChannel, payChannel1);
+        int count = payChannelService.count(payChannel1);
+        if (count <= 0) return JSON.toJSONString(pageModel);
+        List<PayChannel> payChannelList = payChannelService.getPayChannelList((payChannel.getPageIndex() - 1) * payChannel.getPageSize(), payChannel.getPageSize(), payChannel1);
+        if (!CollectionUtils.isEmpty(payChannelList)) {
+            JSONArray array = new JSONArray();
+            for (PayChannel pc : payChannelList) {
+                JSONObject object = (JSONObject) JSONObject.toJSON(pc);
+                object.put("createTime", DateUtil.date2Str(pc.getCreateTime()));
+                array.add(object);
+            }
+            pageModel.setList(array);
+        }
+        pageModel.setCount(count);
+        pageModel.setMsg("ok");
+        pageModel.setRel(true);
+        return JSON.toJSONString(pageModel);
+    }
 }

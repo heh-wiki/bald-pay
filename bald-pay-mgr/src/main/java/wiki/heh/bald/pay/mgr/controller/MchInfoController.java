@@ -13,7 +13,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import wiki.heh.bald.pay.common.util.DateUtil;
 import wiki.heh.bald.pay.mgr.model.MchInfo;
-import wiki.heh.bald.pay.mgr.model.form.MchInfoParam;
+import wiki.heh.bald.pay.mgr.model.form.MchInfoForm;
 import wiki.heh.bald.pay.mgr.model.vo.Result;
 import wiki.heh.bald.pay.mgr.service.MchInfoService;
 import wiki.heh.bald.pay.mgr.util.PageModel;
@@ -113,7 +113,7 @@ public class MchInfoController {
 
     @PostMapping("save/v1")
     @ResponseBody
-    public String save(@RequestBody MchInfoParam params) {
+    public String save(@RequestBody MchInfoForm params) {
         _log.info("请求保存商户记录");
         MchInfo mchInfo = new MchInfo();
         BeanUtils.copyProperties(params, mchInfo);
