@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import wiki.heh.bald.pay.common.util.DateUtil;
 import wiki.heh.bald.pay.mgr.model.MchInfo;
 import wiki.heh.bald.pay.mgr.model.form.MchInfoForm;
+import wiki.heh.bald.pay.mgr.model.form.SearchMchInfo;
 import wiki.heh.bald.pay.mgr.model.vo.Result;
 import wiki.heh.bald.pay.mgr.service.MchInfoService;
 import wiki.heh.bald.pay.mgr.util.PageModel;
@@ -111,19 +112,43 @@ public class MchInfoController {
         return JSON.toJSONString(Result.success(mchInfo));
     }
 
+    @PostMapping("list/v1")
+    @ResponseBody
+    public String listV1(@RequestBody SearchMchInfo info) {
+        PageModel pageModel = new PageModel();
+        MchInfo mchInfo = new MchInfo();
+        BeanUtils.copyProperties(info, mchInfo);
+        int count = mchInfoService.count(mchInfo);
+        if (count <= 0) return JSON.toJSONString(pageModel);
+        List<MchInfo> mchInfoList = mchInfoService.getMchInfoList((info.getPageIndex() - 1) * info.getPageIndex(), info.getPageSize(), mchInfo);
+        if (!CollectionUtils.isEmpty(mchInfoList)) {
+            JSONArray array = new JSONArray();
+            for (MchInfo mi : mchInfoList) {
+                JSONObject object = (JSONObject) JSONObject.toJSON(mi);
+                object.put("createTime", DateUtil.date2Str(mi.getCreateTime()));
+                array.add(object);
+            }
+            pageModel.setList(array);
+        }
+        pageModel.setCount(count);
+        pageModel.setMsg("ok");
+        pageModel.setRel(true);
+        return JSON.toJSONString(pageModel);
+    }
+
     @PostMapping("save/v1")
     @ResponseBody
     public String save(@RequestBody MchInfoForm params) {
         _log.info("请求保存商户记录");
         MchInfo mchInfo = new MchInfo();
         BeanUtils.copyProperties(params, mchInfo);
-        int result;
+        String result;
         if (StringUtils.isBlank(params.getMchId())) {
             // 添加
-            result = mchInfoService.addMchInfo(mchInfo);
+            result = mchInfoService.addMchInfoString(mchInfo);
         } else {
             // 修改
-            result = mchInfoService.updateMchInfo(mchInfo);
+            result = mchInfoService.updateMchInfo(mchInfo) + "";
         }
         _log.info("保存商户记录,返回:{}", result);
         return result + "";

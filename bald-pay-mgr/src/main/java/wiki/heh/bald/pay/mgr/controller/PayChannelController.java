@@ -203,6 +203,7 @@ public class PayChannelController {
             }
             pageModel.setList(array);
         }
+
         pageModel.setCount(count);
         pageModel.setMsg("ok");
         pageModel.setRel(true);

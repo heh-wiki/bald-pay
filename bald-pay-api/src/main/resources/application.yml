@@ -4,12 +4,12 @@ server:
 spring:
   datasource:
     #    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://10.0.0.254:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
-    username: root
-    password: Qwe@as123
-#    url: jdbc:mysql://172.16.10.244:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
+#    url: jdbc:mysql://10.0.0.254:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
 #    username: root
-#    password: Zhskg@2020Mysql
+#    password: Qwe@as123
+    url: jdbc:mysql://172.16.10.244:3306/heh_bald_pay?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: Zhskg@2020Mysql
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialSize: 5    # 初始化大小
     minIdle: 5        # 最小

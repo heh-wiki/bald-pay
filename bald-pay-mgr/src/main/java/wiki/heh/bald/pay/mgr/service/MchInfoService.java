@@ -10,7 +10,6 @@ import wiki.heh.bald.pay.mgr.model.MchInfoExample;
 import java.util.List;
 
 /**
- *
  * @author heh
  * @version v1.0
  * @date 2020-12-18
@@ -31,11 +30,25 @@ public class MchInfoService {
         example.setLimit(1);
         List<MchInfo> mchInfos = mchInfoMapper.selectByExample(example);
         String mchId = "10000000";
-        if(!CollectionUtils.isEmpty(mchInfos)) {
+        if (!CollectionUtils.isEmpty(mchInfos)) {
             mchId = String.valueOf(Integer.parseInt(mchInfos.get(0).getMchId()) + 1);
         }
         mchInfo.setMchId(mchId);
         return mchInfoMapper.insertSelective(mchInfo);
+    }
+
+    public String addMchInfoString(MchInfo mchInfo) {
+        MchInfoExample example = new MchInfoExample();
+        example.setOrderByClause("mchId DESC");
+        example.setOffset(0);
+        example.setLimit(1);
+        List<MchInfo> mchInfos = mchInfoMapper.selectByExample(example);
+        String mchId = "10000000";
+        if (!CollectionUtils.isEmpty(mchInfos)) {
+            mchId = String.valueOf(Integer.parseInt(mchInfos.get(0).getMchId()) + 1);
+        }
+        mchInfo.setMchId(mchId);
+        return mchInfoMapper.insertSelective(mchInfo) > 0 ? mchId : "0";
     }
 
     public int updateMchInfo(MchInfo mchInfo) {
@@ -64,9 +77,10 @@ public class MchInfoService {
     }
 
     void setCriteria(MchInfoExample.Criteria criteria, MchInfo mchInfo) {
-        if(mchInfo != null) {
-            if(StringUtils.isNotBlank(mchInfo.getMchId())) criteria.andMchIdEqualTo(mchInfo.getMchId());
-            if(mchInfo.getType() != null && !"-99".equals(mchInfo.getType())) criteria.andTypeEqualTo(mchInfo.getType());
+        if (mchInfo != null) {
+            if (StringUtils.isNotBlank(mchInfo.getMchId())) criteria.andMchIdEqualTo(mchInfo.getMchId());
+            if (mchInfo.getType() != null && !"-99".equals(mchInfo.getType()))
+                criteria.andTypeEqualTo(mchInfo.getType());
         }
     }
 
