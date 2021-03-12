@@ -87,13 +87,9 @@ public class PayOrderServiceImpl extends BaseService implements IPayOrderService
         String s = RpcUtil.mkRet(result);
         if(s == null) {
             throw new ServiceException(PayServiceErrorType.RET_BIZ_DATA_NOT_EXISTS);
-//            return BaldPayUtil.makeRetData(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_FAIL, "0111", "调用微信支付失败"), resKey);
         }
-        Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
-        map.putAll((Map) result.get("bizResult"));
-        //todo 需要修改参照支付宝
-        return Result.success(result.get("bizResult"));
-//        return BaldPayUtil.makeRetData(map, resKey);
+        Map<String, Object> map = (Map) result.get("bizResult");
+        return Result.sign(PayDigestUtil.getSign(map, resKey, "payParams"), map);
     }
 
     public Result doAliPayReq(String channelId, JSONObject payOrder, String resKey) {
@@ -106,10 +102,8 @@ public class PayOrderServiceImpl extends BaseService implements IPayOrderService
                 result = payChannel4AliService.doAliPayMobileReq(jsonParam,resKey);
                 break;
             case PayConstant.PAY_CHANNEL_ALIPAY_PC :
-//                result = payChannel4AliService.doAliPayPcReq(jsonParam);
                 break;
             case PayConstant.PAY_CHANNEL_ALIPAY_WAP :
-//                result = payChannel4AliService.doAliPayWapReq(jsonParam);
                 break;
             case PayConstant.PAY_CHANNEL_ALIPAY_QR :
                 result = payChannel4AliService.doAliPayQrReq(jsonParam,resKey);
@@ -122,13 +116,6 @@ public class PayOrderServiceImpl extends BaseService implements IPayOrderService
                 break;
         }
         return result;
-//        String s = RpcUtil.mkRet(result);
-//        if(s == null) {
-//            return BaldPayUtil.makeRetData(BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_FAIL, "0111", "调用支付宝支付失败"), resKey);
-//        }
-//        Map<String, Object> map = BaldPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
-//        map.putAll((Map) result.get("bizResult"));
-//        return BaldPayUtil.makeRetData(map, resKey);
     }
 
     @Override
